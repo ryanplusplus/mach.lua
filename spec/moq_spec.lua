@@ -71,4 +71,8 @@ describe('The mock library', function()
   end)
 
   -- multiple return values
+
+  -- ordering
+
+  -- allowed vs. not allowed functions on the expectation
 end)
