@@ -1,6 +1,12 @@
 describe('The mock library', function()
   moq = require 'moq'
 
+  local function shoulFail(test)
+    if pcall(test) then
+      error('expected failure did not occur')
+    end
+  end
+
   it('should allow you to verify that a function is called', function()
     local m = moq.createMockFunction()
 
@@ -127,17 +133,18 @@ describe('The mock library', function()
   end)
 
   it('should fail when a function is incorrectly used as a method', function()
-    -- local someTable = {
-    --   foo = function() end
-    -- }
+    shouldFail(function()
+      local someTable = {
+        foo = function() end
+      }
 
-    -- mockedTable = moq.createMockTable(someTable)
+      mockedTable = moq.createMockTable(someTable)
 
-    -- moq.mock(mockedTable.foo):shouldBeCalledWith(1):andWillReturn(2):
-    -- when(function()
-    --   mockedTable:foo(1)
-    -- end
-    error('todo')
+      moq.mock(mockedTable.foo):shouldBeCalledWith(1):andWillReturn(2):
+      when(function()
+        mockedTable:foo(1)
+      end)
+    end)
   end)
 
   it('should allow an object with methods to be mocked', function()
