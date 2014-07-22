@@ -1,7 +1,7 @@
 describe('The mock library', function()
   moq = require 'moq'
 
-  local function shoulFail(test)
+  local function shouldFail(test)
     if pcall(test) then
       error('expected failure did not occur')
     end
@@ -15,11 +15,12 @@ describe('The mock library', function()
   end)
 
   it('should alert you when a function is not called', function()
-    -- local m = moq.createMockFunction()
+    shouldFail(function()
+      local m = moq.createMockFunction()
 
-    -- moq.mock(m):shouldBeCalled():
-    -- when(function() m() end)
-    error('todo')
+      moq.mock(m):shouldBeCalled():
+      when(function() end)
+    end)
   end)
 
   it('should allow you to verify that a function has been called with the correct arguments', function()
@@ -30,11 +31,12 @@ describe('The mock library', function()
   end)
 
   it('should alert you when a function has been called with incorrect arguments', function()
-    -- local m = moq.createMockFunction()
+    shouldFail(function()
+      local m = moq.createMockFunction()
 
-    -- moq.mock(m):shouldBeCalledWith(1, '2'):
-    -- when(function() m(1, '2') end)
-    error('todo')
+      moq.mock(m):shouldBeCalledWith(1, '2'):
+      when(function() m(1, '3') end)
+    end)
   end)
 
   it('should allow you to specify the return value of a mocked function', function()
@@ -164,17 +166,18 @@ describe('The mock library', function()
   end)
 
   it('should fail when a method is incorrectly used as a function', function()
-    -- local someObject = {}
+    shouldFail(function()
+      local someObject = {}
 
-    -- function someObject:foo() end
+      function someObject:foo() end
 
-    -- mockedObject = moq.createMockObject(someObject)
+      mockedObject = moq.createMockObject(someObject)
 
-    -- moq.mock(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
-    -- when(function()
-    --   mockedObject.foo(1)
-    -- end)
-    error('todo')
+      moq.mock(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
+      when(function()
+        mockedObject.foo(1)
+      end)
+    end)
   end)
 
   -- ordering
