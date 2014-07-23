@@ -15,11 +15,29 @@ describe('The mock library', function()
   end)
 
   it('should alert you when a function is not called', function()
-    shouldFail(function()
-      local m = moq.createMockFunction()
+    local m = moq.createMockFunction()
 
+    shouldFail(function()
       moq(m):shouldBeCalled():
       when(function() end)
+    end)
+  end)
+
+  it('should alert you when the wrong function is called', function()
+    local m1 = moq.createMockFunction()
+    local m2 = moq.createMockFunction()
+
+    shouldFail(function()
+      moq(m1):shouldBeCalled():
+      when(function() m2() end)
+    end)
+  end)
+
+  it('should alert you when a function is called unexpectedly', function()
+    local m = moq.createMockFunction()
+
+    shouldFail(function()
+      mo()
     end)
   end)
 
@@ -31,9 +49,9 @@ describe('The mock library', function()
   end)
 
   it('should alert you when a function has been called with incorrect arguments', function()
-    shouldFail(function()
-      local m = moq.createMockFunction()
+    local m = moq.createMockFunction()
 
+    shouldFail(function()
       moq(m):shouldBeCalledWith(1, '2'):
       when(function() m(1, '3') end)
     end)

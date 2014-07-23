@@ -1,12 +1,16 @@
 local subscriber
 
-local function mock_handle(callback, thunk)
+local function unexpectedCall()
+  error('unexpected mock function called')
+end
+
+local function mockHandle(callback, thunk)
   subscriber = callback
   thunk()
   subscriber = nil
 end
 
-local function mock_called(m, args)
+local function mockCalled(m, args)
   return subscriber(m, args)
 end
 
@@ -28,7 +32,7 @@ function ExpectedCall:new(f, args)
 end
 
 function ExpectedCall:functionMatches(f)
-  return _f == self.f
+  return f == self._f
 end
 
 function ExpectedCall:argsMatch(args)
@@ -80,7 +84,7 @@ function MockExpectation:when(thunk)
     return table.remove(self._calls, 1):getReturnValues()
   end
 
-  mock_handle(called, thunk)
+  mockHandle(called, thunk)
 
   assert(#self._calls == 0, 'not all calls occurred')
 end
@@ -126,7 +130,7 @@ local function createMockFunction()
   local f
 
   function f(...)
-    return mock_called(f, table.pack(...))
+    return mockCalled(f, table.pack(...))
   end
 
   return f
@@ -138,7 +142,7 @@ local function createMockMethod()
   function m(...)
     local args = table.pack(...)
     table.remove(args, 1)
-    return mock_called(m, args)
+    return mockCalled(m, args)
   end
 
   return m
@@ -175,6 +179,6 @@ moq = {
   createMockObject = createMockObject
 }
 
-setmetatable(moq, {__call = mock})
+setmetatable(moq, {__call = function(_, ...) return mock(...) end})
 
 return moq
