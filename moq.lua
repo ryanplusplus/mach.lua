@@ -168,10 +168,13 @@ local function createMockObject(o)
   return mocked
 end
 
-return {
-  mock = mock,
+moq = {
   createMockFunction = createMockFunction,
   createMockTable = createMockTable,
   createMockMethod = createMockMethod,
   createMockObject = createMockObject
 }
+
+setmetatable(moq, {__call = mock})
+
+return moq
