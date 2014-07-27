@@ -1,7 +1,7 @@
 mock.lua
 ========
 
-Simple mocking framework for Lua based on CppUTest
+Simple mocking framework for Lua based on CppUMock
 
 ## Mocking a Function
 
