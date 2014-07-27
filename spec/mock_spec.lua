@@ -126,14 +126,14 @@ describe('The mock library', function()
       return mock(m2):shouldBeCalledWith(1, 2, 3)
     end
 
-    function codeUnderTestRuns()
+    function theCodeUnderTestRuns()
       m1()
       m2(1, 2, 3)
     end
 
     somethingShouldHappen():
     andAlso(anotherThingShouldHappen()):
-    when(codeUnderTestRuns)
+    when(theCodeUnderTestRuns)
   end)
 
   it('should allow a table of functions to be mocked', function()
@@ -173,7 +173,7 @@ describe('The mock library', function()
     function someObject:foo() end
     function someObject:bar() end
 
-    mockedObject = mock:mockObject(someObject)
+    local mockedObject = mock:mockObject(someObject)
 
     mock(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
     andAlso(mock(mockedObject.bar):shouldBeCalled()):
@@ -189,7 +189,7 @@ describe('The mock library', function()
 
       function someObject:foo() end
 
-      mockedObject = mock:mockObject(someObject)
+      local mockedObject = mock:mockObject(someObject)
 
       mock(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
       when(function()
@@ -198,7 +198,45 @@ describe('The mock library', function()
     end)
   end)
 
+  it('should let you expect a function to be called multiple times', function()
+    local f = mock:mockFunction()
+
+    mock(f):shouldBeCalledWith(2):andWillReturn(1):multipleTimes(3):
+    when(function()
+      assert(f(2) == 1)
+      assert(f(2) == 1)
+      assert(f(2) == 1)
+    end)
+  end)
+
+  it('should fail if a function is not called enough times', function()
+    shouldFail(function()
+      local f = mock:mockFunction()
+
+      mock(f):shouldBeCalledWith(2):andWillReturn(1):multipleTimes(3):
+      when(function()
+        assert(f(2) == 1)
+        assert(f(2) == 1)
+      end)
+    end)
+  end)
+
+  it('should fail if a function is called too many times', function()
+    shouldFail(function()
+      local f = mock:mockFunction()
+
+      mock(f):shouldBeCalledWith(2):andWillReturn(1):multipleTimes(2):
+      when(function()
+        assert(f(2) == 1)
+        assert(f(2) == 1)
+        assert(f(2) == 1)
+      end)
+    end)
+  end)
+
   -- ordering
+
+  -- multiple times
 
   -- allowed vs. not allowed functions on the expectation (ie: state machine for expectation)
 end)

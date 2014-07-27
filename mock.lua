@@ -124,6 +124,14 @@ function MockExpectation:shouldBeCalled()
   return self:shouldBeCalledWith()
 end
 
+function MockExpectation:multipleTimes(times)
+  for i = 1, times - 1 do
+    table.insert(self._calls, self._calls[#self._calls])
+  end
+
+  return self
+end
+
 
 
 function Mock:mockFunction()
