@@ -1,7 +1,11 @@
+local Mock = {}
+
+
+
 local subscriber
 
 local function unexpectedCall()
-  error('unexpected mock function called')
+  error('unexpected Mock function called')
 end
 
 local function mockHandle(callback, thunk)
@@ -122,7 +126,7 @@ end
 
 
 
-local function createMockFunction()
+function Mock:newFunction()
   local f
 
   function f(...)
@@ -132,7 +136,7 @@ local function createMockFunction()
   return f
 end
 
-local function createMockMethod()
+function Mock:newMethod()
   local m
 
   function m(...)
@@ -144,37 +148,30 @@ local function createMockMethod()
   return m
 end
 
-local function createMockTable(t)
+function Mock:newTable(t)
   local mocked = {}
 
   for k, v in pairs(t) do
     if type(v) == 'function' then
-      mocked[k] = createMockFunction()
+      mocked[k] = self:newFunction()
     end
   end
 
   return mocked
 end
 
-local function createMockObject(o)
+function Mock:newObject(o)
   local mocked = {}
 
   for k, v in pairs(o) do
     if type(v) == 'function' then
-      mocked[k] = createMockMethod()
+      mocked[k] = self:newMethod()
     end
   end
 
   return mocked
 end
 
-mock = {
-  createMockFunction = createMockFunction,
-  createMockTable = createMockTable,
-  createMockMethod = createMockMethod,
-  createMockObject = createMockObject
-}
+setmetatable(Mock, {__call = function(_, ...) return MockExpectation:new(...) end})
 
-setmetatable(mock, {__call = function(_, ...) return MockExpectation:new(...) end})
-
-return mock
+return Mock
