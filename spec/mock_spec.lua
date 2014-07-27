@@ -7,128 +7,139 @@ describe('The mock library', function()
     end
   end
 
-  it('should allow you to verify that a function is called', function()
-    local m = mock:mockFunction()
+  local function shouldFailWith(expectedMessage, test)
+    local result, actualMessage = pcall(test)
+    _, _, actualMessage = actualMessage:find(":%w+: (.+)")
 
-    mock(m):shouldBeCalled():
-    when(function() m() end)
+    if(result) then
+      error('expected failure did not occur')
+    elseif(actualMessage ~= expectedMessage) then
+      error('expected failure message: "' .. expectedMessage .. '" did not match actual failure message: "' .. actualMessage .. '"')
+    end
+  end
+
+  it('should allow you to verify that a function is called', function()
+    local f = mock:mockFunction('f')
+
+    mock(f):shouldBeCalled():
+    when(function() f() end)
   end)
 
   it('should alert you when a function is not called', function()
-    local m = mock:mockFunction()
+    local f = mock:mockFunction('f')
 
     shouldFail(function()
-      mock(m):shouldBeCalled():
+      mock(f):shouldBeCalled():
       when(function() end)
     end)
   end)
 
   it('should alert you when the wrong function is called', function()
-    local m1 = mock:mockFunction()
-    local m2 = mock:mockFunction()
+    local f1 = mock:mockFunction('f1')
+    local f2 = mock:mockFunction('f2')
 
-    shouldFail(function()
-      mock(m1):shouldBeCalled():
-      when(function() m2() end)
+    shouldFailWith('unexpected function "f2" called', function()
+      mock(f1):shouldBeCalled():
+      when(function() f2() end)
     end)
   end)
 
   it('should alert you when a function is called unexpectedly', function()
-    local m = mock:mockFunction()
+    local f = mock:mockFunction('f')
 
-    shouldFail(function()
-      m()
+    shouldFailWith('unexpected function "f" called', function()
+      f()
     end)
   end)
 
   it('should allow you to verify that a function has been called with the correct arguments', function()
-    local m = mock:mockFunction()
+    local f = mock:mockFunction('f')
 
-    mock(m):shouldBeCalledWith(1, '2'):
-    when(function() m(1, '2') end)
+    mock(f):shouldBeCalledWith(1, '2'):
+    when(function() f(1, '2') end)
   end)
 
   it('should alert you when a function has been called with incorrect arguments', function()
-    local m = mock:mockFunction()
+    local f = mock:mockFunction('f')
 
     shouldFail(function()
-      mock(m):shouldBeCalledWith(1, '2'):
-      when(function() m(1, '3') end)
+      mock(f):shouldBeCalledWith(1, '2'):
+      when(function() f(1, '3') end)
     end)
   end)
 
   it('should allow you to specify the return value of a mocked function', function()
-    local m = mock:mockFunction()
+    local f = mock:mockFunction('f')
 
-    mock(m):shouldBeCalled():andWillReturn(4):
+    mock(f):shouldBeCalled():andWillReturn(4):
     when(function()
-      assert.is.equal(m(), 4)
+      assert.is.equal(f(), 4)
     end)
   end)
 
   it('should allow you to specify multiple return values for a mocked function', function()
-    local m = mock:mockFunction()
+    local f = mock:mockFunction('f')
 
-    mock(m):shouldBeCalled():andWillReturn(1, 2):
+    mock(f):shouldBeCalled():andWillReturn(1, 2):
     when(function()
-      r1, r2 = m()
+      r1, r2 = f()
       assert.is.equal(r1, 1)
       assert.is.equal(r2, 2)
     end)
   end)
 
   it('should allow you to check that a function has been called multiple times', function()
-    local m = mock:mockFunction()
+    local f = mock:mockFunction('f')
 
-    mock(m):shouldBeCalled():
-    andAlso(mock(m):shouldBeCalledWith(1, 2, 3)):
+    mock(f):shouldBeCalled():
+    andAlso(mock(f):shouldBeCalledWith(1, 2, 3)):
     when(function()
-      m()
-      m(1, 2, 3)
+      f()
+      f(1, 2, 3)
     end)
   end)
 
   it('should allow you to check that multiple functions are called', function()
-    local m1 = mock:mockFunction()
-    local m2 = mock:mockFunction()
+    local f1 = mock:mockFunction('f1')
+    local f2 = mock:mockFunction('f2')
 
-    mock(m1):shouldBeCalled():
-    andAlso(mock(m2):shouldBeCalledWith(1, 2, 3)):
+    mock(f1):shouldBeCalled():
+    andAlso(mock(f2):shouldBeCalledWith(1, 2, 3)):
     when(function()
-      m1()
-      m2(1, 2, 3)
+      f1()
+      f2(1, 2, 3)
     end)
   end)
 
   it('should allow you to mix and match call types', function()
-    local m1 = mock:mockFunction()
-    local m2 = mock:mockFunction()
+    local f1 = mock:mockFunction('f1')
+    local f2 = mock:mockFunction('f2')
 
-    mock(m1):shouldBeCalled():
-    andAlso(mock(m2):shouldBeCalledWith(1, 2, 3)):
-    andThen(mock(m2):shouldBeCalledWith(1):andWillReturn(4)):
+    mock(f1):shouldBeCalled():
+    andAlso(mock(f2):shouldBeCalledWith(1, 2, 3)):
+    andThen(mock(f2):shouldBeCalledWith(1):andWillReturn(4)):
     when(function()
-      m1()
-      m2(1, 2, 3)
-      assert.is.equal(m2(1), 4)
+      f1()
+      f2(1, 2, 3)
+      assert.is.equal(f2(1), 4)
     end)
   end)
 
   it('should allow functions to be used to improve readability', function()
-    local m1 = mock:mockFunction()
-    local m2 = mock:mockFunction()
+    local f1 = mock:mockFunction('f1')
+    local f2 = mock:mockFunction('f1')
 
     function somethingShouldHappen()
-      return mock(m1):shouldBeCalled()
+      return mock(f1):shouldBeCalled()
     end
 
     function anotherThingShouldHappen()
-      return mock(m2):shouldBeCalledWith(1, 2, 3)
+      return mock(f2):shouldBeCalledWith(1, 2, 3)
     end
 
     function theCodeUnderTestRuns()
-      m1()
-      m2(1, 2, 3)
+      f1()
+      f2(1, 2, 3)
     end
 
     somethingShouldHappen():
@@ -142,7 +153,7 @@ describe('The mock library', function()
       bar = function() end
     }
 
-    mockedTable = mock:mockTable(someTable)
+    mockedTable = mock:mockTable(someTable, 'someTable')
 
     mock(mockedTable.foo):shouldBeCalledWith(1):andWillReturn(2):
     andAlso(mock(mockedTable.bar):shouldBeCalled()):
@@ -199,7 +210,7 @@ describe('The mock library', function()
   end)
 
   it('should let you expect a function to be called multiple times', function()
-    local f = mock:mockFunction()
+    local f = mock:mockFunction('f')
 
     mock(f):shouldBeCalledWith(2):andWillReturn(1):multipleTimes(3):
     when(function()
@@ -223,7 +234,7 @@ describe('The mock library', function()
 
   it('should fail if a function is called too many times', function()
     shouldFail(function()
-      local f = mock:mockFunction()
+      local f = mock:mockFunction('f')
 
       mock(f):shouldBeCalledWith(2):andWillReturn(1):multipleTimes(2):
       when(function()
@@ -235,8 +246,6 @@ describe('The mock library', function()
   end)
 
   -- ordering
-
-  -- multiple times
 
   -- allowed vs. not allowed functions on the expectation (ie: state machine for expectation)
 end)

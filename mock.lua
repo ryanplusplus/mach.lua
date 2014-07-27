@@ -4,18 +4,14 @@ local Mock = {}
 
 local subscriber
 
-local function unexpectedCall()
-  error('unexpected Mock function called')
-end
-
 local function mockHandle(callback, thunk)
   subscriber = callback
   thunk()
   subscriber = nil
 end
 
-local function mockCalled(m, args)
-  return subscriber(m, args)
+local function mockCalled(m, name, args)
+  return subscriber(m, name, args)
 end
 
 
@@ -79,11 +75,10 @@ function MockExpectation:andWillReturn(...)
 end
 
 function MockExpectation:when(thunk)
-  local function called(m, args)
+  local function called(m, name, args)
     assert(#self._calls > 0, 'unexpected call')
-
-    assert(self._calls[1]:functionMatches(m), 'unexpected function called')
-    assert(self._calls[1]:argsMatch(args), 'unexpected arguments provided')
+    assert(self._calls[1]:functionMatches(m), 'unexpected function "' .. name .. '" called', 2)
+    assert(self._calls[1]:argsMatch(args), 'unexpected arguments provided to function "' .. name .. '"')
 
     return table.remove(self._calls, 1):getReturnValues()
   end
@@ -134,46 +129,50 @@ end
 
 
 
-function Mock:mockFunction()
+function Mock:mockFunction(name)
+  name = name or '<anonymous>'
   local f
 
   function f(...)
-    return mockCalled(f, table.pack(...))
+    return mockCalled(f, name, table.pack(...))
   end
 
   return f
 end
 
-function Mock:mockMethod()
+function Mock:mockMethod(name)
+  name = name or '<anonymous>'
   local m
 
   function m(...)
     local args = table.pack(...)
     table.remove(args, 1)
-    return mockCalled(m, args)
+    return mockCalled(m, name, args)
   end
 
   return m
 end
 
-function Mock:mockTable(t)
+function Mock:mockTable(t, name)
+  name = name or '<anonymous>'
   local mocked = {}
 
   for k, v in pairs(t) do
     if type(v) == 'function' then
-      mocked[k] = self:mockFunction()
+      mocked[k] = self:mockFunction(name .. '.' .. tostring(k))
     end
   end
 
   return mocked
 end
 
-function Mock:mockObject(o)
+function Mock:mockObject(o, name)
+  name = name or '<anonymous>'
   local mocked = {}
 
   for k, v in pairs(o) do
     if type(v) == 'function' then
-      mocked[k] = self:mockMethod()
+      mocked[k] = self:mockMethod(name .. ':' .. tostring(k))
     end
   end
 
