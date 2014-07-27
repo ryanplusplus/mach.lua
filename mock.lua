@@ -126,7 +126,7 @@ end
 
 
 
-function Mock:newFunction()
+function Mock:mockFunction()
   local f
 
   function f(...)
@@ -136,7 +136,7 @@ function Mock:newFunction()
   return f
 end
 
-function Mock:newMethod()
+function Mock:mockMethod()
   local m
 
   function m(...)
@@ -148,24 +148,24 @@ function Mock:newMethod()
   return m
 end
 
-function Mock:newTable(t)
+function Mock:mockTable(t)
   local mocked = {}
 
   for k, v in pairs(t) do
     if type(v) == 'function' then
-      mocked[k] = self:newFunction()
+      mocked[k] = self:mockFunction()
     end
   end
 
   return mocked
 end
 
-function Mock:newObject(o)
+function Mock:mockObject(o)
   local mocked = {}
 
   for k, v in pairs(o) do
     if type(v) == 'function' then
-      mocked[k] = self:newMethod()
+      mocked[k] = self:mockMethod()
     end
   end
 
