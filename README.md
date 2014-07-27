@@ -16,7 +16,7 @@ Simple mocking framework for Lua based on CppUMock
 
     mock = require 'Mock'
     
-    o = {}
+    local o = {}
     o.m = mock:mockMethod()
 
     mock(m):shouldBeCalled():
@@ -26,7 +26,7 @@ Simple mocking framework for Lua based on CppUMock
 
     mock = require 'Mock'
     
-    someTable = {
+    local someTable = {
       foo = function() end,
       bar = function() end
     }
@@ -40,7 +40,7 @@ Simple mocking framework for Lua based on CppUMock
 
     mock = require 'Mock'
     
-    someObject = {}
+    local someObject = {}
     function someObject:foo() end
     function someObject:bar() end
     
@@ -62,6 +62,8 @@ Simple mocking framework for Lua based on CppUMock
 
 ## Extra Credit For Readability
 
+    mock = require 'Mock'
+    
     local m1 = mock:mockFunction()
     local m2 = mock:mockFunction()
 
@@ -78,6 +80,7 @@ Simple mocking framework for Lua based on CppUMock
       m2(1, 2, 3)
     end
 
+    -- Actual test:
     somethingShouldHappen():
     andAlso(anotherThingShouldHappen()):
     when(theCodeUnderTestRuns)
