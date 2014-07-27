@@ -122,10 +122,6 @@ end
 
 
 
-local function mock(m)
-  return MockExpectation:new(m)
-end
-
 local function createMockFunction()
   local f
 
@@ -172,13 +168,13 @@ local function createMockObject(o)
   return mocked
 end
 
-moq = {
+mock = {
   createMockFunction = createMockFunction,
   createMockTable = createMockTable,
   createMockMethod = createMockMethod,
   createMockObject = createMockObject
 }
 
-setmetatable(moq, {__call = function(_, ...) return mock(...) end})
+setmetatable(mock, {__call = function(_, ...) return MockExpectation:new(...) end})
 
-return moq
+return mock

@@ -1,5 +1,5 @@
 describe('The mock library', function()
-  moq = require 'moq'
+  mock = require 'mock'
 
   local function shouldFail(test)
     if pcall(test) then
@@ -8,33 +8,33 @@ describe('The mock library', function()
   end
 
   it('should allow you to verify that a function is called', function()
-    local m = moq.createMockFunction()
+    local m = mock.createMockFunction()
 
-    moq(m):shouldBeCalled():
+    mock(m):shouldBeCalled():
     when(function() m() end)
   end)
 
   it('should alert you when a function is not called', function()
-    local m = moq.createMockFunction()
+    local m = mock.createMockFunction()
 
     shouldFail(function()
-      moq(m):shouldBeCalled():
+      mock(m):shouldBeCalled():
       when(function() end)
     end)
   end)
 
   it('should alert you when the wrong function is called', function()
-    local m1 = moq.createMockFunction()
-    local m2 = moq.createMockFunction()
+    local m1 = mock.createMockFunction()
+    local m2 = mock.createMockFunction()
 
     shouldFail(function()
-      moq(m1):shouldBeCalled():
+      mock(m1):shouldBeCalled():
       when(function() m2() end)
     end)
   end)
 
   it('should alert you when a function is called unexpectedly', function()
-    local m = moq.createMockFunction()
+    local m = mock.createMockFunction()
 
     shouldFail(function()
       m()
@@ -42,34 +42,34 @@ describe('The mock library', function()
   end)
 
   it('should allow you to verify that a function has been called with the correct arguments', function()
-    local m = moq.createMockFunction()
+    local m = mock.createMockFunction()
 
-    moq(m):shouldBeCalledWith(1, '2'):
+    mock(m):shouldBeCalledWith(1, '2'):
     when(function() m(1, '2') end)
   end)
 
   it('should alert you when a function has been called with incorrect arguments', function()
-    local m = moq.createMockFunction()
+    local m = mock.createMockFunction()
 
     shouldFail(function()
-      moq(m):shouldBeCalledWith(1, '2'):
+      mock(m):shouldBeCalledWith(1, '2'):
       when(function() m(1, '3') end)
     end)
   end)
 
   it('should allow you to specify the return value of a mocked function', function()
-    local m = moq.createMockFunction()
+    local m = mock.createMockFunction()
 
-    moq(m):shouldBeCalled():andWillReturn(4):
+    mock(m):shouldBeCalled():andWillReturn(4):
     when(function()
       assert.is.equal(m(), 4)
     end)
   end)
 
   it('should allow you to specify multiple return values for a mocked function', function()
-    local m = moq.createMockFunction()
+    local m = mock.createMockFunction()
 
-    moq(m):shouldBeCalled():andWillReturn(1, 2):
+    mock(m):shouldBeCalled():andWillReturn(1, 2):
     when(function()
       r1, r2 = m()
       assert.is.equal(r1, 1)
@@ -78,10 +78,10 @@ describe('The mock library', function()
   end)
 
   it('should allow you to check that a function has been called multiple times', function()
-    local m = moq.createMockFunction()
+    local m = mock.createMockFunction()
 
-    moq(m):shouldBeCalled():
-    andAlso(moq(m):shouldBeCalledWith(1, 2, 3)):
+    mock(m):shouldBeCalled():
+    andAlso(mock(m):shouldBeCalledWith(1, 2, 3)):
     when(function()
       m()
       m(1, 2, 3)
@@ -89,11 +89,11 @@ describe('The mock library', function()
   end)
 
   it('should allow you to check that multiple functions are called', function()
-    local m1 = moq.createMockFunction()
-    local m2 = moq.createMockFunction()
+    local m1 = mock.createMockFunction()
+    local m2 = mock.createMockFunction()
 
-    moq(m1):shouldBeCalled():
-    andAlso(moq(m2):shouldBeCalledWith(1, 2, 3)):
+    mock(m1):shouldBeCalled():
+    andAlso(mock(m2):shouldBeCalledWith(1, 2, 3)):
     when(function()
       m1()
       m2(1, 2, 3)
@@ -101,12 +101,12 @@ describe('The mock library', function()
   end)
 
   it('should allow you to mix and match call types', function()
-    local m1 = moq.createMockFunction()
-    local m2 = moq.createMockFunction()
+    local m1 = mock.createMockFunction()
+    local m2 = mock.createMockFunction()
 
-    moq(m1):shouldBeCalled():
-    andAlso(moq(m2):shouldBeCalledWith(1, 2, 3)):
-    andThen(moq(m2):shouldBeCalledWith(1):andWillReturn(4)):
+    mock(m1):shouldBeCalled():
+    andAlso(mock(m2):shouldBeCalledWith(1, 2, 3)):
+    andThen(mock(m2):shouldBeCalledWith(1):andWillReturn(4)):
     when(function()
       m1()
       m2(1, 2, 3)
@@ -115,15 +115,15 @@ describe('The mock library', function()
   end)
 
   it('should allow functions to be used to improve readability', function()
-    local m1 = moq.createMockFunction()
-    local m2 = moq.createMockFunction()
+    local m1 = mock.createMockFunction()
+    local m2 = mock.createMockFunction()
 
     function somethingShouldHappen()
-      return moq(m1):shouldBeCalled()
+      return mock(m1):shouldBeCalled()
     end
 
     function anotherThingShouldHappen()
-      return moq(m2):shouldBeCalledWith(1, 2, 3)
+      return mock(m2):shouldBeCalledWith(1, 2, 3)
     end
 
     function codeUnderTestRuns()
@@ -142,10 +142,10 @@ describe('The mock library', function()
       bar = function() end
     }
 
-    mockedTable = moq.createMockTable(someTable)
+    mockedTable = mock.createMockTable(someTable)
 
-    moq(mockedTable.foo):shouldBeCalledWith(1):andWillReturn(2):
-    andAlso(moq(mockedTable.bar):shouldBeCalled()):
+    mock(mockedTable.foo):shouldBeCalledWith(1):andWillReturn(2):
+    andAlso(mock(mockedTable.bar):shouldBeCalled()):
     when(function()
       mockedTable.foo(1)
       mockedTable.bar()
@@ -158,9 +158,9 @@ describe('The mock library', function()
         foo = function() end
       }
 
-      mockedTable = moq.createMockTable(someTable)
+      mockedTable = mock.createMockTable(someTable)
 
-      moq(mockedTable.foo):shouldBeCalledWith(1):andWillReturn(2):
+      mock(mockedTable.foo):shouldBeCalledWith(1):andWillReturn(2):
       when(function()
         mockedTable:foo(1)
       end)
@@ -173,10 +173,10 @@ describe('The mock library', function()
     function someObject:foo() end
     function someObject:bar() end
 
-    mockedObject = moq.createMockObject(someObject)
+    mockedObject = mock.createMockObject(someObject)
 
-    moq(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
-    andAlso(moq(mockedObject.bar):shouldBeCalled()):
+    mock(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
+    andAlso(mock(mockedObject.bar):shouldBeCalled()):
     when(function()
       mockedObject:foo(1)
       mockedObject:bar()
@@ -189,9 +189,9 @@ describe('The mock library', function()
 
       function someObject:foo() end
 
-      mockedObject = moq.createMockObject(someObject)
+      mockedObject = mock.createMockObject(someObject)
 
-      moq(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
+      mock(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
       when(function()
         mockedObject.foo(1)
       end)
