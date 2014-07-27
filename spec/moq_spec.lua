@@ -37,7 +37,7 @@ describe('The mock library', function()
     local m = moq.createMockFunction()
 
     shouldFail(function()
-      mo()
+      m()
     end)
   end)
 
