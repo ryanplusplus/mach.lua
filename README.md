@@ -7,7 +7,7 @@ Simple mocking framework for Lua based on CppUTest
 
     mock = require 'Mock'
     
-    local f = mock:function()
+    local f = mock:mockFunction()
 
     mock(f):shouldBeCalled():
     when(function() f() end)
@@ -17,7 +17,7 @@ Simple mocking framework for Lua based on CppUTest
     mock = require 'Mock'
     
     o = {}
-    o.m = mock:method()
+    o.m = mock:mockMethod()
 
     mock(m):shouldBeCalled():
     when(function() o:m() end)
@@ -31,7 +31,7 @@ Simple mocking framework for Lua based on CppUTest
       bar = function() end
     }
     
-    mockedTable = mock:table(someTable)
+    mockedTable = mock:mockTable(someTable)
 
     mock(mockedTable.foo):shouldBeCalled():
     when(function() mockedTable.foo() end)
@@ -44,7 +44,7 @@ Simple mocking framework for Lua based on CppUTest
     function someObject:foo() end
     function someObject:bar() end
     
-    mockedObject = mock:object(someObject)
+    mockedObject = mock:mockObject(someObject)
     
     mock(mockedObject.foo):shouldBeCalled():
     when(function() mockedObject:foo() end)
@@ -53,8 +53,8 @@ Simple mocking framework for Lua based on CppUTest
 
     mock = require 'Mock'
     
-    local f1 = mock:function()
-    local f2 = mock:function()
+    local f1 = mock:mockFunction()
+    local f2 = mock:mockFunction()
 
     mock(f1):shouldBeCalled():
     andAlso(mock(f2):shouldBeCalled()):
