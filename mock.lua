@@ -2,16 +2,18 @@ local Mock = {}
 
 
 
-local subscriber
+local callbacks
 
-local function mockHandle(callback, thunk)
-  subscriber = callback
+function mockHandle(callback, thunk)
+  callbacks[callback] = true
   thunk()
-  subscriber = nil
+  callbacks[callback] = nil
 end
 
-local function mockCalled(m, name, args)
-  return subscriber(m, name, args)
+function mockCalled(m, name, args)
+  for callback in callbacks do
+    callback(m, name, args)
+  end
 end
 
 
