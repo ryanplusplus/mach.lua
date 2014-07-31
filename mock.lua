@@ -2,18 +2,16 @@ local Mock = {}
 
 
 
-local callbacks
+local subscriber
 
 function mockHandle(callback, thunk)
-  callbacks[callback] = true
+  subscriber = callback
   thunk()
-  callbacks[callback] = nil
+  subscriber = nil
 end
 
 function mockCalled(m, name, args)
-  for callback in callbacks do
-    callback(m, name, args)
-  end
+  return subscriber(m, name, args)
 end
 
 
@@ -136,24 +134,27 @@ end
 
 function Mock:mockFunction(name)
   name = name or '<anonymous>'
-  local f
+  local f = {}
 
-  function f(...)
+  function fCall(_, ...)
     return mockCalled(f, name, table.pack(...))
   end
+
+  setmetatable(f, {__call = fCall})
 
   return f
 end
 
 function Mock:mockMethod(name)
   name = name or '<anonymous>'
-  local m
+  local m = {}
 
-  function m(...)
+  function mCall(_, _, ...)
     local args = table.pack(...)
-    table.remove(args, 1)
     return mockCalled(m, name, args)
   end
+
+  setmetatable(m, {__call = mCall})
 
   return m
 end
