@@ -28,7 +28,7 @@ describe('The mock library', function()
   it('should alert you when a function is not called', function()
     local f = mock:mockFunction('f')
 
-    shouldFail(function()
+    shouldFailWith('not all calls occurred', function()
       mock(f):shouldBeCalled():
       when(function() end)
     end)
@@ -38,7 +38,7 @@ describe('The mock library', function()
     local f1 = mock:mockFunction('f1')
     local f2 = mock:mockFunction('f2')
 
-    shouldFailWith('unexpected function "f2" called', function()
+    shouldFailWith('unexpected function call f2() occurred', function()
       mock(f1):shouldBeCalled():
       when(function() f2() end)
     end)
@@ -47,7 +47,7 @@ describe('The mock library', function()
   it('should alert you when a function is called unexpectedly', function()
     local f = mock:mockFunction('f')
 
-    shouldFailWith('unexpected function "f" called', function()
+    shouldFailWith('unexpected function call f() occurred', function()
       f()
     end)
   end)

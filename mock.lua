@@ -53,6 +53,9 @@ function ExpectedCall:getReturnValues(...)
   return table.unpack(self._return)
 end
 
+function ExpectedCall:toString()
+  return
+end
 
 
 MockExpectation = {}
@@ -77,7 +80,7 @@ end
 function MockExpectation:when(thunk)
   local function called(m, name, args)
     assert(#self._calls > 0, 'unexpected call')
-    assert(self._calls[1]:functionMatches(m), 'unexpected function "' .. name .. '" called', 2)
+    assert(self._calls[1]:functionMatches(m), 'unexpected function call ' .. name .. '(' .. table.concat(args, ', ') .. ') occurred', 2)
     assert(self._calls[1]:argsMatch(args), 'unexpected arguments provided to function "' .. name .. '"')
 
     return table.remove(self._calls, 1):getReturnValues()
