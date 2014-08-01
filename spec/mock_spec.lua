@@ -194,6 +194,32 @@ describe('The mock library', function()
     end)
   end)
 
+  it('should allow mocking of any callable in an object, not just functions', function()
+    local someTable = {
+      foo = {}
+    }
+
+    setmetatable(someTable.foo, {__call = function() end})
+
+    local mockedTable = mock:mockTable(someTable)
+
+    mock(mockedTable.foo):shouldBeCalled():
+    when(function() mockedTable.foo() end)
+  end)
+
+  it('should allow mocking of any callable in a table, not just functions', function()
+    local someObject = {
+      foo = {}
+    }
+
+    setmetatable(someObject.foo, {__call = function() end})
+
+    local mockedObject = mock:mockObject(someObject)
+
+    mock(mockedObject.foo):shouldBeCalled():
+    when(function() mockedObject:foo() end)
+  end)
+
   it('should fail when a method is incorrectly used as a function', function()
     shouldFail(function()
       local someObject = {}

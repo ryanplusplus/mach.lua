@@ -159,12 +159,18 @@ function Mock:mockMethod(name)
   return m
 end
 
+function IsCallable(x)
+  local isFunction = type(x) == 'function'
+  local hasCallMetamethod = type((debug.getmetatable(x) or {}).__call) == 'function'
+  return isFunction or hasCallMetamethod
+end
+
 function Mock:mockTable(t, name)
   name = name or '<anonymous>'
   local mocked = {}
 
   for k, v in pairs(t) do
-    if type(v) == 'function' then
+    if IsCallable(v) then
       mocked[k] = self:mockFunction(name .. '.' .. tostring(k))
     end
   end
@@ -177,7 +183,7 @@ function Mock:mockObject(o, name)
   local mocked = {}
 
   for k, v in pairs(o) do
-    if type(v) == 'function' then
+    if IsCallable(v) then
       mocked[k] = self:mockMethod(name .. ':' .. tostring(k))
     end
   end
