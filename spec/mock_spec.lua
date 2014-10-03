@@ -276,11 +276,11 @@ describe('The mock library', function()
     end)
   end)
 
-  it('should fail if shouldBeCalled is used after a call has already been specified', function()
+  it('should fail if shouldBeCalledWith is used after a call has already been specified', function()
     shouldFailWith('call already specified', function()
       local f = mock:mockFunction('f')
 
-      mock(f):shouldBeCalled():shouldBeCalledWith()
+      mock(f):shouldBeCalled():shouldBeCalledWith(4)
     end)
   end)
 
@@ -358,5 +358,67 @@ describe('The mock library', function()
     end)
   end)
 
-  -- may be called? ie: calls that are not required
+  it('should allow soft expectations to be called', function()
+    local f = mock:mockFunction('f')
+
+    mock(f):mayBeCalled():
+    when(function()
+      f()
+    end)
+  end)
+
+  it('should allow soft expectations to be omitted', function()
+    local f = mock:mockFunction('f')
+
+    mock(f):mayBeCalled():
+    when(function() end)
+  end)
+
+  it('should allow soft expectations with return values', function()
+    local f = mock:mockFunction('f')
+
+    mock(f):mayBeCalled():andWillReturn(3):
+    when(function()
+      assert(f() == 3)
+    end)
+  end)
+
+  it('should allow soft expectations with arguments to be called', function()
+    local f = mock:mockFunction('f')
+
+    mock(f):mayBeCalledWith(4):
+    when(function()
+      f(4)
+    end)
+  end)
+
+  it('should allow soft expectations with arguments to be omitted', function()
+    local f = mock:mockFunction('f')
+
+    mock(f):mayBeCalledWith(4):
+    when(function() end)
+  end)
+
+  it('should allow soft expectations with arguments to be omitted', function()
+    local f = mock:mockFunction('f')
+
+    mock(f):mayBeCalledWith(4):
+    when(function() end)
+  end)
+
+  it('should fail if mayBeCalled is used after a call has already been specified', function()
+    shouldFailWith('call already specified', function()
+      local f = mock:mockFunction('f')
+
+      mock(f):shouldBeCalled():mayBeCalled()
+    end)
+  end)
+
+  it('should fail if mayBeCalledWith is used after a call has already been specified', function()
+    shouldFailWith('call already specified', function()
+      local f = mock:mockFunction('f')
+
+      mock(f):shouldBeCalled():mayBeCalledWith(4)
+    end)
+  end)
 end)

@@ -14,10 +14,11 @@ end
 
 ExpectedCall = {}
 
-function ExpectedCall:new(f, args)
+function ExpectedCall:new(f, required, args)
   local o = {
     _f = f,
     _ordered = false,
+    _required = required,
     _args = args,
     _return = {}
   }
@@ -56,6 +57,10 @@ end
 
 function ExpectedCall:hasFixedOrder()
   return self._ordered
+end
+
+function ExpectedCall:isRequired()
+  return self._required
 end
 
 MockExpectation = {}
@@ -118,7 +123,11 @@ function MockExpectation:when(thunk)
 
   mockHandle(called, thunk)
 
-  assert(#self._calls == 0, 'not all calls occurred')
+  for _, call in pairs(self._calls) do
+    if call:isRequired() then
+      error('not all calls occurred', 2)
+    end
+  end
 end
 
 function MockExpectation:after(thunk)
@@ -153,7 +162,7 @@ function MockExpectation:shouldBeCalledWith(...)
   end
 
   self._callSpecified = true
-  table.insert(self._calls, ExpectedCall:new(self._m, table.pack(...)))
+  table.insert(self._calls, ExpectedCall:new(self._m, true, table.pack(...)))
   return self
 end
 
@@ -163,6 +172,24 @@ function MockExpectation:shouldBeCalled()
   end
 
   return self:shouldBeCalledWith()
+end
+
+function MockExpectation:mayBeCalledWith(...)
+  if self._callSpecified == true then
+    error('call already specified', 2)
+  end
+
+  self._callSpecified = true
+  table.insert(self._calls, ExpectedCall:new(self._m, false, table.pack(...)))
+  return self
+end
+
+function MockExpectation:mayBeCalled()
+  if self._callSpecified == true then
+    error('call already specified', 2)
+  end
+
+  return self:mayBeCalledWith()
 end
 
 function MockExpectation:multipleTimes(times)
