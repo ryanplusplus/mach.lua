@@ -17,6 +17,7 @@ ExpectedCall = {}
 function ExpectedCall:new(f, args)
   local o = {
     _f = f,
+    _ordered = false,
     _args = args,
     _return = {}
   }
@@ -47,6 +48,14 @@ end
 
 function ExpectedCall:getReturnValues(...)
   return table.unpack(self._return)
+end
+
+function ExpectedCall:fixOrder()
+  self._ordered = true
+end
+
+function ExpectedCall:hasFixedOrder()
+  return self._ordered
 end
 
 MockExpectation = {}
@@ -92,6 +101,8 @@ function MockExpectation:when(thunk)
           return table.remove(self._calls, i):getReturnValues()
         end
       end
+
+      if call:hasFixedOrder() then break end
     end
 
     if not validFunctionFound then
@@ -115,7 +126,8 @@ function MockExpectation:after(thunk)
 end
 
 function MockExpectation:andThen(other)
-  -- Need to handle ordering
+  self._calls[#self._calls]:fixOrder()
+
   for _, call in ipairs(other._calls) do
     table.insert(self._calls, call)
   end
@@ -124,7 +136,6 @@ function MockExpectation:andThen(other)
 end
 
 function MockExpectation:andAlso(other)
-  -- Need to handle ordering
   for _, call in ipairs(other._calls) do
     table.insert(self._calls, call)
   end

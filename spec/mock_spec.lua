@@ -287,8 +287,8 @@ describe('The mock library', function()
     mock(f1):shouldBeCalled():
     andAlso(mock(f2):shouldBeCalled()):
     when(function()
-      f1()
       f2()
+      f1()
     end)
 
     mock(f1):shouldBeCalledWith(1):
@@ -299,5 +299,26 @@ describe('The mock library', function()
     end)
   end)
 
-  -- ordering
+  it('should not allow calls to happen out of order when andThen is used', function()
+    local f1 = mock:mockFunction('f1')
+    local f2 = mock:mockFunction('f2')
+
+    shouldFailWith('unexpected function "f2" called', function()
+      mock(f1):shouldBeCalled():
+      andThen(mock(f2):shouldBeCalled()):
+      when(function()
+        f2()
+        f1()
+      end)
+    end)
+
+    shouldFailWith('unexpected arguments provided to function "f1"', function()
+      mock(f1):shouldBeCalledWith(1):
+      andThen(mock(f2):shouldBeCalled(2)):
+      when(function()
+        f1(2)
+        f1(1)
+      end)
+    end)
+  end)
 end)
