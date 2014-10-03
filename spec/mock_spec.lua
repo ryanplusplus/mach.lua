@@ -253,6 +253,22 @@ describe('The mock library', function()
     end)
   end)
 
+  it('should fail if when is not preceeded by shouldBeCalled or shouldBeCalledWith', function()
+    shouldFailWith('incomplete expectation', function()
+      local f = mock:mockFunction('f')
+
+      mock(f):when(function() end)
+    end)
+  end)
+
+  it('should fail if after is not preceeded by shouldBeCalled or shouldBeCalledWith', function()
+    shouldFailWith('incomplete expectation', function()
+      local f = mock:mockFunction('f')
+
+      mock(f):after(function() end)
+    end)
+  end)
+
   -- ordering
 
   -- allowed vs. not allowed functions on the expectation (ie: state machine for expectation)

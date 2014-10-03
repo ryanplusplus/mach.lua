@@ -79,6 +79,8 @@ function MockExpectation:andWillReturn(...)
 end
 
 function MockExpectation:when(thunk)
+  if #self._calls == 0 then error('incomplete expectation', 2) end
+
   local function called(m, name, args)
     assert(#self._calls > 0, 'unexpected call')
     assert(self._calls[1]:functionMatches(m), 'unexpected function "' .. name .. '" called', 2)
@@ -93,6 +95,8 @@ function MockExpectation:when(thunk)
 end
 
 function MockExpectation:after(thunk)
+  if #self._calls == 0 then error('incomplete expectation', 2) end
+
   self:when(thunk)
 end
 
