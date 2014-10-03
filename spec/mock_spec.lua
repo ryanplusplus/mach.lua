@@ -28,7 +28,7 @@ describe('The mock library', function()
   it('should alert you when a function is not called', function()
     local f = mock:mockFunction('f')
 
-    shouldFail(function()
+    shouldFailWith('not all calls occurred', function()
       mock(f):shouldBeCalled():
       when(function() end)
     end)
@@ -38,7 +38,7 @@ describe('The mock library', function()
     local f1 = mock:mockFunction('f1')
     local f2 = mock:mockFunction('f2')
 
-    shouldFailWith('unexpected function "f2" called', function()
+    shouldFailWith('unexpected function call f2()', function()
       mock(f1):shouldBeCalled():
       when(function() f2() end)
     end)
@@ -47,7 +47,7 @@ describe('The mock library', function()
   it('should alert you when a function is called unexpectedly', function()
     local f = mock:mockFunction('f')
 
-    shouldFailWith('unexpected function "f" called', function()
+    shouldFailWith('unexpected function call f()', function()
       f()
     end)
   end)
@@ -194,6 +194,32 @@ describe('The mock library', function()
     end)
   end)
 
+  it('should allow mocking of any callable in an object, not just functions', function()
+    local someTable = {
+      foo = {}
+    }
+
+    setmetatable(someTable.foo, {__call = function() end})
+
+    local mockedTable = mock:mockTable(someTable)
+
+    mock(mockedTable.foo):shouldBeCalled():
+    when(function() mockedTable.foo() end)
+  end)
+
+  it('should allow mocking of any callable in a table, not just functions', function()
+    local someObject = {
+      foo = {}
+    }
+
+    setmetatable(someObject.foo, {__call = function() end})
+
+    local mockedObject = mock:mockObject(someObject)
+
+    mock(mockedObject.foo):shouldBeCalled():
+    when(function() mockedObject:foo() end)
+  end)
+
   it('should fail when a method is incorrectly used as a function', function()
     shouldFail(function()
       local someObject = {}
@@ -307,7 +333,7 @@ describe('The mock library', function()
     local f1 = mock:mockFunction('f1')
     local f2 = mock:mockFunction('f2')
 
-    shouldFailWith('unexpected function "f2" called', function()
+    shouldFailWith('unexpected function call f2()', function()
       mock(f1):shouldBeCalled():
       andThen(mock(f2):shouldBeCalled()):
       when(function()
@@ -316,7 +342,7 @@ describe('The mock library', function()
       end)
     end)
 
-    shouldFailWith('unexpected arguments provided to function "f1"', function()
+    shouldFailWith('unexpected arguments provided to function f1', function()
       mock(f1):shouldBeCalledWith(1):
       andThen(mock(f2):shouldBeCalled(2)):
       when(function()
@@ -331,7 +357,7 @@ describe('The mock library', function()
     local f2 = mock:mockFunction('f2')
     local f3 = mock:mockFunction('f3')
 
-    shouldFailWith('unexpected function "f3" called', function()
+    shouldFailWith('unexpected function call f3()', function()
       mock(f1):shouldBeCalled():
       andAlso(mock(f2):shouldBeCalled()):
       andThen(mock(f3):shouldBeCalled()):

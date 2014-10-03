@@ -2,13 +2,13 @@ local Mock = {}
 
 local subscriber
 
-local function mockHandle(callback, thunk)
+function mockHandle(callback, thunk)
   subscriber = callback
   thunk()
   subscriber = nil
 end
 
-local function mockCalled(m, name, args)
+function mockCalled(m, name, args)
   return subscriber(m, name, args)
 end
 
@@ -115,9 +115,9 @@ function MockExpectation:when(thunk)
     end
 
     if not validFunctionFound then
-      error('unexpected function "' .. name .. '" called', 2)
+      error('unexpected function call ' .. name .. '(' .. table.concat(args, ', ') .. ')', 2)
     else
-      error('unexpected arguments provided to function "' .. name .. '"', 2)
+      error('unexpected arguments provided to function ' .. name, 2)
     end
   end
 
@@ -202,26 +202,35 @@ end
 
 function Mock:mockFunction(name)
   name = name or '<anonymous>'
-  local f
+  local f = {}
 
-  function f(...)
+  function fCall(_, ...)
     return mockCalled(f, name, table.pack(...))
   end
+
+  setmetatable(f, {__call = fCall})
 
   return f
 end
 
 function Mock:mockMethod(name)
   name = name or '<anonymous>'
-  local m
+  local m = {}
 
-  function m(...)
+  function mCall(_, _, ...)
     local args = table.pack(...)
-    table.remove(args, 1)
     return mockCalled(m, name, args)
   end
 
+  setmetatable(m, {__call = mCall})
+
   return m
+end
+
+function IsCallable(x)
+  local isFunction = type(x) == 'function'
+  local hasCallMetamethod = type((debug.getmetatable(x) or {}).__call) == 'function'
+  return isFunction or hasCallMetamethod
 end
 
 function Mock:mockTable(t, name)
@@ -229,7 +238,7 @@ function Mock:mockTable(t, name)
   local mocked = {}
 
   for k, v in pairs(t) do
-    if type(v) == 'function' then
+    if IsCallable(v) then
       mocked[k] = self:mockFunction(name .. '.' .. tostring(k))
     end
   end
@@ -242,7 +251,7 @@ function Mock:mockObject(o, name)
   local mocked = {}
 
   for k, v in pairs(o) do
-    if type(v) == 'function' then
+    if IsCallable(v) then
       mocked[k] = self:mockMethod(name .. ':' .. tostring(k))
     end
   end
