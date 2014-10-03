@@ -54,7 +54,6 @@ function ExpectedCall:getReturnValues(...)
 end
 
 
-
 MockExpectation = {}
 
 function MockExpectation:new(m)
@@ -70,7 +69,12 @@ function MockExpectation:new(m)
 end
 
 function MockExpectation:andWillReturn(...)
+  if #self._calls == 0 then
+    error('cannot set return value for an unspecified call', 2)
+  end
+
   self._calls[#self._calls]:setReturnValues(...)
+
   return self
 end
 

@@ -245,6 +245,14 @@ describe('The mock library', function()
     end)
   end)
 
+  it('should fail if andWillReturn is not preceeded by shouldBeCalled or shouldBeCalledWith', function()
+    shouldFailWith('cannot set return value for an unspecified call', function()
+      local f = mock:mockFunction('f')
+
+      mock(f):andWillReturn(1)
+    end)
+  end)
+
   -- ordering
 
   -- allowed vs. not allowed functions on the expectation (ie: state machine for expectation)
