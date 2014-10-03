@@ -59,6 +59,7 @@ MockExpectation = {}
 function MockExpectation:new(m)
   local o = {
     _m = m,
+    _callSpecified = false,
     _calls = {}
   }
 
@@ -69,7 +70,7 @@ function MockExpectation:new(m)
 end
 
 function MockExpectation:andWillReturn(...)
-  if #self._calls == 0 then
+  if not self._callSpecified then
     error('cannot set return value for an unspecified call', 2)
   end
 
@@ -79,7 +80,9 @@ function MockExpectation:andWillReturn(...)
 end
 
 function MockExpectation:when(thunk)
-  if #self._calls == 0 then error('incomplete expectation', 2) end
+  if not self._callSpecified then
+    error('incomplete expectation', 2)
+  end
 
   local function called(m, name, args)
     assert(#self._calls > 0, 'unexpected call')
@@ -95,7 +98,9 @@ function MockExpectation:when(thunk)
 end
 
 function MockExpectation:after(thunk)
-  if #self._calls == 0 then error('incomplete expectation', 2) end
+  if not self._callSpecified then
+    error('incomplete expectation', 2)
+  end
 
   self:when(thunk)
 end
@@ -119,11 +124,20 @@ function MockExpectation:andAlso(other)
 end
 
 function MockExpectation:shouldBeCalledWith(...)
+  if self._callSpecified == true then
+    error('call already specified', 2)
+  end
+
+  self._callSpecified = true
   table.insert(self._calls, ExpectedCall:new(self._m, table.pack(...)))
   return self
 end
 
 function MockExpectation:shouldBeCalled()
+  if self._callSpecified == true then
+    error('call already specified', 2)
+  end
+
   return self:shouldBeCalledWith()
 end
 
