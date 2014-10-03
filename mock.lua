@@ -1,7 +1,5 @@
 local Mock = {}
 
-
-
 local subscriber
 
 local function mockHandle(callback, thunk)
@@ -13,8 +11,6 @@ end
 local function mockCalled(m, name, args)
   return subscriber(m, name, args)
 end
-
-
 
 ExpectedCall = {}
 
@@ -52,7 +48,6 @@ end
 function ExpectedCall:getReturnValues(...)
   return table.unpack(self._return)
 end
-
 
 MockExpectation = {}
 
@@ -148,8 +143,6 @@ function MockExpectation:multipleTimes(times)
 
   return self
 end
-
-
 
 function Mock:mockFunction(name)
   name = name or '<anonymous>'

@@ -281,6 +281,4 @@ describe('The mock library', function()
   end)
 
   -- ordering
-
-  -- allowed vs. not allowed functions on the expectation (ie: state machine for expectation)
 end)
