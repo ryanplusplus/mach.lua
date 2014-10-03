@@ -342,7 +342,7 @@ describe('The mock library', function()
       end)
     end)
 
-    shouldFailWith('unexpected arguments provided to function f1', function()
+    shouldFailWith('unexpected arguments (2) provided to function f1', function()
       mock(f1):shouldBeCalledWith(1):
       andThen(mock(f2):shouldBeCalled(2)):
       when(function()

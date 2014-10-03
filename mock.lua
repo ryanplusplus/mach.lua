@@ -117,7 +117,7 @@ function MockExpectation:when(thunk)
     if not validFunctionFound then
       error('unexpected function call ' .. name .. '(' .. table.concat(args, ', ') .. ')', 2)
     else
-      error('unexpected arguments provided to function ' .. name, 2)
+      error('unexpected arguments (' .. table.concat(args, ', ') .. ') provided to function ' .. name, 2)
     end
   end
 
