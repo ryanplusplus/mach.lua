@@ -1,7 +1,7 @@
 mock.lua
 ========
 
-Simple mocking framework for Lua based on CppUMock and designed for readability.
+Simple mocking framework for Lua inspired by CppUMock and designed for readability.
 
 ## Mocking a Function
 
