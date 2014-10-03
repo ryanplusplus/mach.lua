@@ -106,9 +106,9 @@ function MockExpectation:when(thunk)
     end
 
     if not validFunctionFound then
-      error('unexpected function "' .. name .. '" called', 3)
+      error('unexpected function "' .. name .. '" called', 2)
     else
-      error('unexpected arguments provided to function "' .. name .. '"', 3)
+      error('unexpected arguments provided to function "' .. name .. '"', 2)
     end
   end
 
