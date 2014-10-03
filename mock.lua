@@ -179,6 +179,6 @@ function Mock:mockObject(o, name)
   return mocked
 end
 
-setmetatable(Mock, {__call = function(_, ...) return MockExpectation:new(...) end})
+setmetatable(Mock, { __call = function(_, ...) return MockExpectation:new(...) end })
 
 return Mock
