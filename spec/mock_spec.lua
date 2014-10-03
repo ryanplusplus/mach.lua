@@ -255,6 +255,7 @@ describe('The mock library', function()
   it('should fail if when is not preceeded by shouldBeCalled or shouldBeCalledWith', function()
     shouldFailWith('incomplete expectation', function()
       local f = mock:mockFunction('f')
+
       mock(f):when(function() end)
     end)
   end)
@@ -262,6 +263,7 @@ describe('The mock library', function()
   it('should fail if after is not preceeded by shouldBeCalled or shouldBeCalledWith', function()
     shouldFailWith('incomplete expectation', function()
       local f = mock:mockFunction('f')
+
       mock(f):after(function() end)
     end)
   end)
@@ -269,6 +271,7 @@ describe('The mock library', function()
   it('should fail if shouldBeCalled is used after a call has already been specified', function()
     shouldFailWith('call already specified', function()
       local f = mock:mockFunction('f')
+
       mock(f):shouldBeCalled():shouldBeCalled()
     end)
   end)
@@ -276,6 +279,7 @@ describe('The mock library', function()
   it('should fail if shouldBeCalled is used after a call has already been specified', function()
     shouldFailWith('call already specified', function()
       local f = mock:mockFunction('f')
+
       mock(f):shouldBeCalled():shouldBeCalledWith()
     end)
   end)
@@ -321,4 +325,38 @@ describe('The mock library', function()
       end)
     end)
   end)
+
+  it('should catch out of order calls when mixed with unordered calls', function()
+    local f1 = mock:mockFunction('f1')
+    local f2 = mock:mockFunction('f2')
+    local f3 = mock:mockFunction('f3')
+
+    shouldFailWith('unexpected function "f3" called', function()
+      mock(f1):shouldBeCalled():
+      andAlso(mock(f2):shouldBeCalled()):
+      andThen(mock(f3):shouldBeCalled()):
+      when(function()
+        f2()
+        f3()
+        f1()
+      end)
+    end)
+  end)
+
+  it('should allow ordered and unordered calls to be mixed', function()
+    local f = mock:mockFunction('f')
+
+    mock(f):shouldBeCalledWith(1):
+    andAlso(mock(f):shouldBeCalledWith(2)):
+    andThen(mock(f):shouldBeCalledWith(3)):
+    andAlso(mock(f):shouldBeCalledWith(4)):
+    when(function()
+      f(2)
+      f(1)
+      f(4)
+      f(3)
+    end)
+  end)
+
+  -- may be called? ie: calls that are not required
 end)

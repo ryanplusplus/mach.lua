@@ -98,6 +98,10 @@ function MockExpectation:when(thunk)
         validFunctionFound = true
 
         if call:argsMatch(args) then
+          if call:hasFixedOrder() and i > 1 then
+            self._calls[i - 1]:fixOrder()
+          end
+
           return table.remove(self._calls, i):getReturnValues()
         end
       end
