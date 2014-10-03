@@ -81,10 +81,24 @@ function MockExpectation:when(thunk)
 
   local function called(m, name, args)
     assert(#self._calls > 0, 'unexpected call')
-    assert(self._calls[1]:functionMatches(m), 'unexpected function "' .. name .. '" called', 2)
-    assert(self._calls[1]:argsMatch(args), 'unexpected arguments provided to function "' .. name .. '"')
 
-    return table.remove(self._calls, 1):getReturnValues()
+    local validFunctionFound = false
+
+    for i, call in ipairs(self._calls) do
+      if call:functionMatches(m) then
+        validFunctionFound = true
+
+        if call:argsMatch(args) then
+          return table.remove(self._calls, i):getReturnValues()
+        end
+      end
+    end
+
+    if not validFunctionFound then
+      error('unexpected function "' .. name .. '" called', 2)
+    else
+      error('unexpected arguments provided to function "' .. name .. '"', 2)
+    end
   end
 
   mockHandle(called, thunk)

@@ -280,5 +280,24 @@ describe('The mock library', function()
     end)
   end)
 
+  it('should allow calls to happen out of order when andAlso is used', function()
+    local f1 = mock:mockFunction('f1')
+    local f2 = mock:mockFunction('f2')
+
+    mock(f1):shouldBeCalled():
+    andAlso(mock(f2):shouldBeCalled()):
+    when(function()
+      f1()
+      f2()
+    end)
+
+    mock(f1):shouldBeCalledWith(1):
+    andAlso(mock(f1):shouldBeCalledWith(2)):
+    when(function()
+      f1(2)
+      f1(1)
+    end)
+  end)
+
   -- ordering
 end)
