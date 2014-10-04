@@ -12,7 +12,8 @@ function mockCalled(m, name, args)
   return subscriber(m, name, args)
 end
 
-ExpectedCall = {}
+local ExpectedCall = {}
+ExpectedCall.__index = ExpectedCall
 
 function ExpectedCall:new(f, required, args)
   local o = {
@@ -23,7 +24,6 @@ function ExpectedCall:new(f, required, args)
     _return = {}
   }
 
-  self.__index = self
   setmetatable(o, self)
 
   return o
@@ -63,7 +63,8 @@ function ExpectedCall:isRequired()
   return self._required
 end
 
-MockExpectation = {}
+local MockExpectation = {}
+MockExpectation.__index = MockExpectation
 
 function MockExpectation:new(m)
   local o = {
@@ -72,7 +73,6 @@ function MockExpectation:new(m)
     _calls = {}
   }
 
-  self.__index = self
   setmetatable(o, self)
 
   return o
