@@ -258,6 +258,15 @@ describe('The mock library', function()
     end)
   end)
 
+  it('should allow after to be used as an alias for when', function()
+    local f = mock:mockFunction()
+
+    mock(f):shouldBeCalled():
+    after(function()
+      f()
+    end)
+  end)
+
   it('should fail if a function is called too many times', function()
     shouldFail(function()
       local f = mock:mockFunction('f')
