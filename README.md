@@ -8,7 +8,7 @@ Simple mocking framework for Lua inspired by CppUMock and designed for readabili
 ```lua
 mock = require 'Mock'
 
-local f = mock:mockFunction()
+local f = mock.mockFunction()
 
 mock(f):shouldBeCalled():
 when(function() f() end)
@@ -20,7 +20,7 @@ when(function() f() end)
 mock = require 'Mock'
 
 local o = {}
-o.m = mock:mockMethod()
+o.m = mock.mockMethod()
 
 mock(m):shouldBeCalled():
 when(function() o:m() end)
@@ -36,7 +36,7 @@ local someTable = {
   bar = function() end
 }
 
-mockedTable = mock:mockTable(someTable)
+mockedTable = mock.mockTable(someTable)
 
 mock(mockedTable.foo):shouldBeCalled():
 when(function() mockedTable.foo() end)
@@ -51,7 +51,7 @@ local someObject = {}
 function someObject:foo() end
 function someObject:bar() end
 
-mockedObject = mock:mockObject(someObject)
+mockedObject = mock.mockObject(someObject)
 
 mock(mockedObject.foo):shouldBeCalled():
 when(function() mockedObject:foo() end)
@@ -62,8 +62,8 @@ when(function() mockedObject:foo() end)
 ```lua
 mock = require 'Mock'
 
-local f1 = mock:mockFunction()
-local f2 = mock:mockFunction()
+local f1 = mock.mockFunction()
+local f2 = mock.mockFunction()
 
 mock(f1):shouldBeCalled():
 andAlso(mock(f2):shouldBeCalled()):
@@ -75,7 +75,7 @@ when(function() f1(); f2() end)
 ```lua
 mock = require 'Mock'
 
-local f = mock:mockFunction()
+local f = mock.mockFunction()
 
 mock(f):mayBeCalled():
 when(function() end)
@@ -86,7 +86,7 @@ when(function() end)
 ```lua
 mock = require 'Mock'
 
-local f = mock:mockFunction()
+local f = mock.mockFunction()
 
 -- Use andAlso when order is important
 mock(f):shouldBeCalledWith(1):
@@ -110,7 +110,7 @@ end)
 ```lua
 mock = require 'Mock'
 
-local f = mock:mockFunction()
+local f = mock.mockFunction()
 
 mock(f):shouldBeCalledWith(1):
 andAlso(mock(f):shouldBeCalledWith(2)):
@@ -129,8 +129,8 @@ end)
 ```lua
 mock = require 'Mock'
 
-local m1 = mock:mockFunction()
-local m2 = mock:mockFunction()
+local m1 = mock.mockFunction()
+local m2 = mock.mockFunction()
 
 function somethingShouldHappen()
   return mock(m1):shouldBeCalled()
