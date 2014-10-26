@@ -6,99 +6,99 @@ Simple mocking framework for Lua inspired by CppUMock and designed for readabili
 ## Mocking a Function
 
 ```lua
-mock = require 'mach'
+mach = require 'mach'
 
-local f = mock.mockFunction()
+local f = mach.mockFunction()
 
-mock(f):shouldBeCalled():
+mach(f):shouldBeCalled():
 when(function() f() end)
 ```
 
 ## Mocking a Method
 
 ```lua
-mock = require 'mach'
+mach = require 'mach'
 
 local o = {}
-o.m = mock.mockMethod()
+o.m = mach.mockMethod()
 
-mock(m):shouldBeCalled():
+mach(m):shouldBeCalled():
 when(function() o:m() end)
 ```
 
 ## Mocking a Table
 
 ```lua
-mock = require 'mach'
+mach = require 'mach'
 
 local someTable = {
   foo = function() end,
   bar = function() end
 }
 
-mockedTable = mock.mockTable(someTable)
+mockedTable = mach.mockTable(someTable)
 
-mock(mockedTable.foo):shouldBeCalled():
+mach(mockedTable.foo):shouldBeCalled():
 when(function() mockedTable.foo() end)
 ```
 
 ## Mocking an Object
 
 ```lua
-mock = require 'mach'
+mach = require 'mach'
 
 local someObject = {}
 function someObject:foo() end
 function someObject:bar() end
 
-mockedObject = mock.mockObject(someObject)
+mockedObject = mach.mockObject(someObject)
 
-mock(mockedObject.foo):shouldBeCalled():
+mach(mockedObject.foo):shouldBeCalled():
 when(function() mockedObject:foo() end)
 ```
 
 ## Multiple Expectations
 
 ```lua
-mock = require 'mach'
+mach = require 'mach'
 
-local f1 = mock.mockFunction()
-local f2 = mock.mockFunction()
+local f1 = mach.mockFunction()
+local f2 = mach.mockFunction()
 
-mock(f1):shouldBeCalled():
-andAlso(mock(f2):shouldBeCalled()):
+mach(f1):shouldBeCalled():
+andAlso(mach(f2):shouldBeCalled()):
 when(function() f1(); f2() end)
 ```
 
 ## Optional Expectations
 
 ```lua
-mock = require 'mach'
+mach = require 'mach'
 
-local f = mock.mockFunction()
+local f = mach.mockFunction()
 
-mock(f):mayBeCalled():
+mach(f):mayBeCalled():
 when(function() end)
 ```
 
 ## Optional Ordering
 
 ```lua
-mock = require 'mach'
+mach = require 'mach'
 
-local f = mock.mockFunction()
+local f = mach.mockFunction()
 
 -- Use andAlso when order is important
-mock(f):shouldBeCalledWith(1):
-andThen(mock(f):shouldBeCalledWith(2)):
+mach(f):shouldBeCalledWith(1):
+andThen(mach(f):shouldBeCalledWith(2)):
 when(function()
   f(2) -- Error, out of order call
   f(1)
 end)
 
 -- Use andAlso when order is unimportant
-mock(f):shouldBeCalledWith(1):
-andAlso(mock(f):shouldBeCalledWith(2)):
+mach(f):shouldBeCalledWith(1):
+andAlso(mach(f):shouldBeCalledWith(2)):
 when(function()
   f(2) -- No error, order is not fixed when 'andAlso' is used
   f(1)
@@ -108,14 +108,14 @@ end)
 ## Mixed Ordering
 
 ```lua
-mock = require 'mach'
+mach = require 'mach'
 
-local f = mock.mockFunction()
+local f = mach.mockFunction()
 
-mock(f):shouldBeCalledWith(1):
-andAlso(mock(f):shouldBeCalledWith(2)):
-andThen(mock(f):shouldBeCalledWith(3)):
-andAlso(mock(f):shouldBeCalledWith(4)):
+mach(f):shouldBeCalledWith(1):
+andAlso(mach(f):shouldBeCalledWith(2)):
+andThen(mach(f):shouldBeCalledWith(3)):
+andAlso(mach(f):shouldBeCalledWith(4)):
 when(function()
   f(2)
   f(1)
@@ -127,17 +127,17 @@ end)
 ## Flexible Syntax
 
 ```lua
-mock = require 'mach'
+mach = require 'mach'
 
-local m1 = mock.mockFunction()
-local m2 = mock.mockFunction()
+local m1 = mach.mockFunction()
+local m2 = mach.mockFunction()
 
 function somethingShouldHappen()
-  return mock(m1):shouldBeCalled()
+  return mach(m1):shouldBeCalled()
 end
 
 function anotherThingShouldHappen()
-  return mock(m2):shouldBeCalledWith(1, 2, 3)
+  return mach(m2):shouldBeCalledWith(1, 2, 3)
 end
 
 function theCodeUnderTestRuns()
