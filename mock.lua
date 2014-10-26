@@ -2,7 +2,7 @@ local Mock = {}
 
 local subscriber
 
-function mockHandle(callback, thunk)
+function handleMockCalls(callback, thunk)
   subscriber = callback
   thunk()
   subscriber = nil
@@ -121,7 +121,7 @@ function MockExpectation:when(thunk)
     end
   end
 
-  mockHandle(called, thunk)
+  handleMockCalls(called, thunk)
 
   for _, call in pairs(self._calls) do
     if call:isRequired() then
@@ -227,7 +227,7 @@ function Mock:mockMethod(name)
   return m
 end
 
-function IsCallable(x)
+function isCallable(x)
   local isFunction = type(x) == 'function'
   local hasCallMetamethod = type((debug.getmetatable(x) or {}).__call) == 'function'
   return isFunction or hasCallMetamethod
@@ -238,7 +238,7 @@ function Mock:mockTable(t, name)
   local mocked = {}
 
   for k, v in pairs(t) do
-    if IsCallable(v) then
+    if isCallable(v) then
       mocked[k] = self:mockFunction(name .. '.' .. tostring(k))
     end
   end
@@ -251,7 +251,7 @@ function Mock:mockObject(o, name)
   local mocked = {}
 
   for k, v in pairs(o) do
-    if IsCallable(v) then
+    if isCallable(v) then
       mocked[k] = self:mockMethod(name .. ':' .. tostring(k))
     end
   end
