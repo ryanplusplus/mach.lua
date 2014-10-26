@@ -13,9 +13,11 @@ function mockCalled(m, name, args)
 end
 
 local ExpectedCall = {}
-ExpectedCall.__index = ExpectedCall
 
-function ExpectedCall:new(f, required, args)
+local ExpectedCallApi = {}
+ExpectedCallApi.__index = ExpectedCallApi
+
+function ExpectedCall.create(f, required, args)
   local o = {
     _f = f,
     _ordered = false,
@@ -24,16 +26,16 @@ function ExpectedCall:new(f, required, args)
     _return = {}
   }
 
-  setmetatable(o, self)
+  setmetatable(o, ExpectedCallApi)
 
   return o
 end
 
-function ExpectedCall:functionMatches(f)
+function ExpectedCallApi:functionMatches(f)
   return f == self._f
 end
 
-function ExpectedCall:argsMatch(args)
+function ExpectedCallApi:argsMatch(args)
   if #self._args ~= #args then return false end
 
   for k in ipairs(self._args) do
@@ -43,42 +45,44 @@ function ExpectedCall:argsMatch(args)
   return true
 end
 
-function ExpectedCall:setReturnValues(...)
+function ExpectedCallApi:setReturnValues(...)
   self._return = table.pack(...)
 end
 
-function ExpectedCall:getReturnValues(...)
+function ExpectedCallApi:getReturnValues(...)
   return table.unpack(self._return)
 end
 
-function ExpectedCall:fixOrder()
+function ExpectedCallApi:fixOrder()
   self._ordered = true
 end
 
-function ExpectedCall:hasFixedOrder()
+function ExpectedCallApi:hasFixedOrder()
   return self._ordered
 end
 
-function ExpectedCall:isRequired()
+function ExpectedCallApi:isRequired()
   return self._required
 end
 
 local MockExpectation = {}
-MockExpectation.__index = MockExpectation
 
-function MockExpectation:new(m)
+local MockExpectationApi = {}
+MockExpectationApi.__index = MockExpectationApi
+
+function MockExpectation.create(m)
   local o = {
     _m = m,
     _callSpecified = false,
     _calls = {}
   }
 
-  setmetatable(o, self)
+  setmetatable(o, MockExpectationApi)
 
   return o
 end
 
-function MockExpectation:andWillReturn(...)
+function MockExpectationApi:andWillReturn(...)
   if not self._callSpecified then
     error('cannot set return value for an unspecified call', 2)
   end
@@ -88,7 +92,7 @@ function MockExpectation:andWillReturn(...)
   return self
 end
 
-function MockExpectation:when(thunk)
+function MockExpectationApi:when(thunk)
   if not self._callSpecified then
     error('incomplete expectation', 2)
   end
@@ -130,7 +134,7 @@ function MockExpectation:when(thunk)
   end
 end
 
-function MockExpectation:after(thunk)
+function MockExpectationApi:after(thunk)
   if not self._callSpecified then
     error('incomplete expectation', 2)
   end
@@ -138,7 +142,7 @@ function MockExpectation:after(thunk)
   self:when(thunk)
 end
 
-function MockExpectation:andThen(other)
+function MockExpectationApi:andThen(other)
   self._calls[#self._calls]:fixOrder()
 
   for _, call in ipairs(other._calls) do
@@ -148,7 +152,7 @@ function MockExpectation:andThen(other)
   return self
 end
 
-function MockExpectation:andAlso(other)
+function MockExpectationApi:andAlso(other)
   for _, call in ipairs(other._calls) do
     table.insert(self._calls, call)
   end
@@ -156,17 +160,17 @@ function MockExpectation:andAlso(other)
   return self
 end
 
-function MockExpectation:shouldBeCalledWith(...)
+function MockExpectationApi:shouldBeCalledWith(...)
   if self._callSpecified == true then
     error('call already specified', 2)
   end
 
   self._callSpecified = true
-  table.insert(self._calls, ExpectedCall:new(self._m, true, table.pack(...)))
+  table.insert(self._calls, ExpectedCall.create(self._m, true, table.pack(...)))
   return self
 end
 
-function MockExpectation:shouldBeCalled()
+function MockExpectationApi:shouldBeCalled()
   if self._callSpecified == true then
     error('call already specified', 2)
   end
@@ -174,17 +178,17 @@ function MockExpectation:shouldBeCalled()
   return self:shouldBeCalledWith()
 end
 
-function MockExpectation:mayBeCalledWith(...)
+function MockExpectationApi:mayBeCalledWith(...)
   if self._callSpecified == true then
     error('call already specified', 2)
   end
 
   self._callSpecified = true
-  table.insert(self._calls, ExpectedCall:new(self._m, false, table.pack(...)))
+  table.insert(self._calls, ExpectedCall.create(self._m, false, table.pack(...)))
   return self
 end
 
-function MockExpectation:mayBeCalled()
+function MockExpectationApi:mayBeCalled()
   if self._callSpecified == true then
     error('call already specified', 2)
   end
@@ -192,7 +196,7 @@ function MockExpectation:mayBeCalled()
   return self:mayBeCalledWith()
 end
 
-function MockExpectation:multipleTimes(times)
+function MockExpectationApi:multipleTimes(times)
   for i = 1, times - 1 do
     table.insert(self._calls, self._calls[#self._calls])
   end
@@ -200,7 +204,7 @@ function MockExpectation:multipleTimes(times)
   return self
 end
 
-function Mock:mockFunction(name)
+function Mock.mockFunction(name)
   name = name or '<anonymous>'
   local f = {}
 
@@ -213,7 +217,7 @@ function Mock:mockFunction(name)
   return f
 end
 
-function Mock:mockMethod(name)
+function Mock.mockMethod(name)
   name = name or '<anonymous>'
   local m = {}
 
@@ -233,32 +237,32 @@ function isCallable(x)
   return isFunction or hasCallMetamethod
 end
 
-function Mock:mockTable(t, name)
+function Mock.mockTable(t, name)
   name = name or '<anonymous>'
   local mocked = {}
 
   for k, v in pairs(t) do
     if isCallable(v) then
-      mocked[k] = self:mockFunction(name .. '.' .. tostring(k))
+      mocked[k] = Mock.mockFunction(name .. '.' .. tostring(k))
     end
   end
 
   return mocked
 end
 
-function Mock:mockObject(o, name)
+function Mock.mockObject(o, name)
   name = name or '<anonymous>'
   local mocked = {}
 
   for k, v in pairs(o) do
     if isCallable(v) then
-      mocked[k] = self:mockMethod(name .. ':' .. tostring(k))
+      mocked[k] = Mock.mockMethod(name .. ':' .. tostring(k))
     end
   end
 
   return mocked
 end
 
-setmetatable(Mock, { __call = function(_, ...) return MockExpectation:new(...) end })
+setmetatable(Mock, { __call = function(_, ...) return MockExpectation.create(...) end })
 
 return Mock
