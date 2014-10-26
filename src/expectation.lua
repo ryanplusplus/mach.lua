@@ -99,7 +99,7 @@ function expectation:shouldBeCalledWith(...)
   end
 
   self._callSpecified = true
-  table.insert(self._calls, ExpectedCall.create(self._m, true, table.pack(...)))
+  table.insert(self._calls, ExpectedCall(self._m, true, table.pack(...)))
   return self
 end
 
@@ -117,7 +117,7 @@ function expectation:mayBeCalledWith(...)
   end
 
   self._callSpecified = true
-  table.insert(self._calls, ExpectedCall.create(self._m, false, table.pack(...)))
+  table.insert(self._calls, ExpectedCall(self._m, false, table.pack(...)))
   return self
 end
 
@@ -137,6 +137,4 @@ function expectation:multipleTimes(times)
   return self
 end
 
-return {
-  create = create
-}
+return create

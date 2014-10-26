@@ -49,6 +49,4 @@ function expectedCall:isRequired()
   return self._required
 end
 
-return {
-  create = create
-}
+return create

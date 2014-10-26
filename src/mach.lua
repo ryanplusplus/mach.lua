@@ -74,6 +74,6 @@ function Mock.mockObject(o, name)
   return mocked
 end
 
-setmetatable(Mock, { __call = function(_, ...) return Expectation.create(...) end })
+setmetatable(Mock, { __call = function(_, ...) return Expectation(...) end })
 
 return Mock
