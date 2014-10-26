@@ -1,5 +1,5 @@
-local ExpectedCall = require 'expected-call'
-local Expectation = require 'expectation'
+local ExpectedCall = require 'mach.expected-call'
+local Expectation = require 'mach.expectation'
 
 local Mock = {}
 

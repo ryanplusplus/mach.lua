@@ -1,4 +1,4 @@
-ExpectedCall = require 'expected-call'
+ExpectedCall = require 'mach.expected-call'
 
 local expectation = {}
 expectation.__index = expectation
