@@ -1,5 +1,5 @@
-describe('The mock library', function()
-  mock = require 'mock'
+describe('The mach library', function()
+  mock = require 'mach'
 
   local function shouldFail(test)
     if pcall(test) then
