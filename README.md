@@ -1,4 +1,4 @@
-mock.lua
+mach.lua
 ========
 
 Simple mocking framework for Lua inspired by CppUMock and designed for readability.
@@ -6,7 +6,7 @@ Simple mocking framework for Lua inspired by CppUMock and designed for readabili
 ## Mocking a Function
 
 ```lua
-mock = require 'Mock'
+mock = require 'mach'
 
 local f = mock.mockFunction()
 
@@ -17,7 +17,7 @@ when(function() f() end)
 ## Mocking a Method
 
 ```lua
-mock = require 'Mock'
+mock = require 'mach'
 
 local o = {}
 o.m = mock.mockMethod()
@@ -29,7 +29,7 @@ when(function() o:m() end)
 ## Mocking a Table
 
 ```lua
-mock = require 'Mock'
+mock = require 'mach'
 
 local someTable = {
   foo = function() end,
@@ -45,7 +45,7 @@ when(function() mockedTable.foo() end)
 ## Mocking an Object
 
 ```lua
-mock = require 'Mock'
+mock = require 'mach'
 
 local someObject = {}
 function someObject:foo() end
@@ -60,7 +60,7 @@ when(function() mockedObject:foo() end)
 ## Multiple Expectations
 
 ```lua
-mock = require 'Mock'
+mock = require 'mach'
 
 local f1 = mock.mockFunction()
 local f2 = mock.mockFunction()
@@ -73,7 +73,7 @@ when(function() f1(); f2() end)
 ## Optional Expectations
 
 ```lua
-mock = require 'Mock'
+mock = require 'mach'
 
 local f = mock.mockFunction()
 
@@ -84,7 +84,7 @@ when(function() end)
 ## Optional Ordering
 
 ```lua
-mock = require 'Mock'
+mock = require 'mach'
 
 local f = mock.mockFunction()
 
@@ -108,7 +108,7 @@ end)
 ## Mixed Ordering
 
 ```lua
-mock = require 'Mock'
+mock = require 'mach'
 
 local f = mock.mockFunction()
 
@@ -127,7 +127,7 @@ end)
 ## Extra Credit For Readability
 
 ```lua
-mock = require 'Mock'
+mock = require 'mach'
 
 local m1 = mock.mockFunction()
 local m2 = mock.mockFunction()
