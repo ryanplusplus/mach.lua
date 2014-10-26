@@ -124,7 +124,7 @@ when(function()
 end)
 ```
 
-## Extra Credit For Readability
+## Flexible Syntax
 
 ```lua
 mock = require 'mach'
