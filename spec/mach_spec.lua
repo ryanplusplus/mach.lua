@@ -457,7 +457,7 @@ describe('The mach library', function()
     end)
   end)
 
-  it('should handle unexpected alls outside of an expectation', function()
+  it('should handle unexpected calls outside of an expectation', function()
     should_fail_with('unexpected function call f(1, 2, 3)', function()
       mach.mock_function('f')(1, 2, 3)
     end)
