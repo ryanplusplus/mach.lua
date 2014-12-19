@@ -1,5 +1,5 @@
-local expectedCall = {}
-expectedCall.__index = expectedCall
+local expected_call = {}
+expected_call.__index = expected_call
 
 local function create(f, required, args)
   local o = {
@@ -10,16 +10,16 @@ local function create(f, required, args)
     _return = {}
   }
 
-  setmetatable(o, expectedCall)
+  setmetatable(o, expected_call)
 
   return o
 end
 
-function expectedCall:functionMatches(f)
+function expected_call:function_matches(f)
   return f == self._f
 end
 
-function expectedCall:argsMatch(args)
+function expected_call:args_match(args)
   if #self._args ~= #args then return false end
 
   for k in ipairs(self._args) do
@@ -29,23 +29,23 @@ function expectedCall:argsMatch(args)
   return true
 end
 
-function expectedCall:setReturnValues(...)
+function expected_call:set_return_values(...)
   self._return = table.pack(...)
 end
 
-function expectedCall:getReturnValues(...)
+function expected_call:get_return_values(...)
   return table.unpack(self._return)
 end
 
-function expectedCall:fixOrder()
+function expected_call:fix_order()
   self._ordered = true
 end
 
-function expectedCall:hasFixedOrder()
+function expected_call:has_fixed_order()
   return self._ordered
 end
 
-function expectedCall:isRequired()
+function expected_call:is_required()
   return self._required
 end
 

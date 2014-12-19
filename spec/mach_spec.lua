@@ -1,13 +1,13 @@
 describe('The mach library', function()
-  local mock = require 'mach'
+  local mach = require 'mach'
 
-  local function shouldFail(test)
+  local function should_fail(test)
     if pcall(test) then
       error('expected failure did not occur')
     end
   end
 
-  local function shouldFailWith(expectedMessage, test)
+  local function should_fail_with(expectedMessage, test)
     local result, actualMessage = pcall(test)
     _, _, actualMessage = actualMessage:find(":%w+: (.+)")
 
@@ -19,68 +19,68 @@ describe('The mach library', function()
   end
 
   it('should allow you to verify that a function is called', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):shouldBeCalled():
+    mach(f):should_be_called():
     when(function() f() end)
   end)
 
   it('should alert you when a function is not called', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    shouldFailWith('not all calls occurred', function()
-      mock(f):shouldBeCalled():
+    should_fail_with('not all calls occurred', function()
+      mach(f):should_be_called():
       when(function() end)
     end)
   end)
 
   it('should alert you when the wrong function is called', function()
-    local f1 = mock.mockFunction('f1')
-    local f2 = mock.mockFunction('f2')
+    local f1 = mach.mock_function('f1')
+    local f2 = mach.mock_function('f2')
 
-    shouldFailWith('unexpected function call f2()', function()
-      mock(f1):shouldBeCalled():
+    should_fail_with('unexpected function call f2()', function()
+      mach(f1):should_be_called():
       when(function() f2() end)
     end)
   end)
 
   it('should alert you when a function is called unexpectedly', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    shouldFailWith('unexpected function call f()', function()
+    should_fail_with('unexpected function call f()', function()
       f()
     end)
   end)
 
   it('should allow you to verify that a function has been called with the correct arguments', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):shouldBeCalledWith(1, '2'):
+    mach(f):should_be_called_with(1, '2'):
     when(function() f(1, '2') end)
   end)
 
   it('should alert you when a function has been called with incorrect arguments', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    shouldFail(function()
-      mock(f):shouldBeCalledWith(1, '2'):
+    should_fail(function()
+      mach(f):should_be_called_with(1, '2'):
       when(function() f(1, '3') end)
     end)
   end)
 
   it('should allow you to specify the return value of a mocked function', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):shouldBeCalled():andWillReturn(4):
+    mach(f):should_be_called():and_will_return(4):
     when(function()
       assert.is.equal(f(), 4)
     end)
   end)
 
   it('should allow you to specify multiple return values for a mocked function', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):shouldBeCalled():andWillReturn(1, 2):
+    mach(f):should_be_called():and_will_return(1, 2):
     when(function()
       r1, r2 = f()
       assert.is.equal(r1, 1)
@@ -89,10 +89,10 @@ describe('The mach library', function()
   end)
 
   it('should allow you to check that a function has been called multiple times', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):shouldBeCalled():
-    andAlso(mock(f):shouldBeCalledWith(1, 2, 3)):
+    mach(f):should_be_called():
+    and_also(mach(f):should_be_called_with(1, 2, 3)):
     when(function()
       f()
       f(1, 2, 3)
@@ -100,11 +100,11 @@ describe('The mach library', function()
   end)
 
   it('should allow you to check that multiple functions are called', function()
-    local f1 = mock.mockFunction('f1')
-    local f2 = mock.mockFunction('f2')
+    local f1 = mach.mock_function('f1')
+    local f2 = mach.mock_function('f2')
 
-    mock(f1):shouldBeCalled():
-    andAlso(mock(f2):shouldBeCalledWith(1, 2, 3)):
+    mach(f1):should_be_called():
+    and_also(mach(f2):should_be_called_with(1, 2, 3)):
     when(function()
       f1()
       f2(1, 2, 3)
@@ -112,12 +112,12 @@ describe('The mach library', function()
   end)
 
   it('should allow you to mix and match call types', function()
-    local f1 = mock.mockFunction('f1')
-    local f2 = mock.mockFunction('f2')
+    local f1 = mach.mock_function('f1')
+    local f2 = mach.mock_function('f2')
 
-    mock(f1):shouldBeCalled():
-    andAlso(mock(f2):shouldBeCalledWith(1, 2, 3)):
-    andThen(mock(f2):shouldBeCalledWith(1):andWillReturn(4)):
+    mach(f1):should_be_called():
+    and_also(mach(f2):should_be_called_with(1, 2, 3)):
+    and_then(mach(f2):should_be_called_with(1):and_will_return(4)):
     when(function()
       f1()
       f2(1, 2, 3)
@@ -126,119 +126,119 @@ describe('The mach library', function()
   end)
 
   it('should allow functions to be used to improve readability', function()
-    local f1 = mock.mockFunction('f1')
-    local f2 = mock.mockFunction('f1')
+    local f1 = mach.mock_function('f1')
+    local f2 = mach.mock_function('f1')
 
-    function somethingShouldHappen()
-      return mock(f1):shouldBeCalled()
+    function something_should_happen()
+      return mach(f1):should_be_called()
     end
 
-    function anotherThingShouldHappen()
-      return mock(f2):shouldBeCalledWith(1, 2, 3)
+    function another_thing_should_happen()
+      return mach(f2):should_be_called_with(1, 2, 3)
     end
 
-    function theCodeUnderTestRuns()
+    function the_code_under_test_runs()
       f1()
       f2(1, 2, 3)
     end
 
-    somethingShouldHappen():
-    andAlso(anotherThingShouldHappen()):
-    when(theCodeUnderTestRuns)
+    something_should_happen():
+    and_also(another_thing_should_happen()):
+    when(the_code_under_test_runs)
   end)
 
   it('should allow a table of functions to be mocked', function()
-    local someTable = {
+    local some_table = {
       foo = function() end,
       bar = function() end
     }
 
-    mockedTable = mock.mockTable(someTable, 'someTable')
+    mocked_table = mach.mock_table(some_table, 'some_table')
 
-    mock(mockedTable.foo):shouldBeCalledWith(1):andWillReturn(2):
-    andAlso(mock(mockedTable.bar):shouldBeCalled()):
+    mach(mocked_table.foo):should_be_called_with(1):and_will_return(2):
+    and_also(mach(mocked_table.bar):should_be_called()):
     when(function()
-      mockedTable.foo(1)
-      mockedTable.bar()
+      mocked_table.foo(1)
+      mocked_table.bar()
     end)
   end)
 
   it('should fail when a function is incorrectly used as a method', function()
-    shouldFail(function()
-      local someTable = {
+    should_fail(function()
+      local some_table = {
         foo = function() end
       }
 
-      mockedTable = mock.mockTable(someTable)
+      mocked_table = mach.mock_table(some_table)
 
-      mock(mockedTable.foo):shouldBeCalledWith(1):andWillReturn(2):
+      mach(mocked_table.foo):should_be_called_with(1):and_will_return(2):
       when(function()
-        mockedTable:foo(1)
+        mocked_table:foo(1)
       end)
     end)
   end)
 
   it('should allow an object with methods to be mocked', function()
-    local someObject = {}
+    local some_object = {}
 
-    function someObject:foo() end
-    function someObject:bar() end
+    function some_object:foo() end
+    function some_object:bar() end
 
-    local mockedObject = mock.mockObject(someObject)
+    local mocked_object = mach.mock_object(some_object)
 
-    mock(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
-    andAlso(mock(mockedObject.bar):shouldBeCalled()):
+    mach(mocked_object.foo):should_be_called_with(1):and_will_return(2):
+    and_also(mach(mocked_object.bar):should_be_called()):
     when(function()
-      mockedObject:foo(1)
-      mockedObject:bar()
+      mocked_object:foo(1)
+      mocked_object:bar()
     end)
   end)
 
   it('should allow mocking of any callable in an object, not just functions', function()
-    local someTable = {
+    local some_table = {
       foo = {}
     }
 
-    setmetatable(someTable.foo, {__call = function() end})
+    setmetatable(some_table.foo, {__call = function() end})
 
-    local mockedTable = mock.mockTable(someTable)
+    local mocked_table = mach.mock_table(some_table)
 
-    mock(mockedTable.foo):shouldBeCalled():
-    when(function() mockedTable.foo() end)
+    mach(mocked_table.foo):should_be_called():
+    when(function() mocked_table.foo() end)
   end)
 
   it('should allow mocking of any callable in a table, not just functions', function()
-    local someObject = {
+    local some_object = {
       foo = {}
     }
 
-    setmetatable(someObject.foo, {__call = function() end})
+    setmetatable(some_object.foo, {__call = function() end})
 
-    local mockedObject = mock.mockObject(someObject)
+    local mocked_object = mach.mock_object(some_object)
 
-    mock(mockedObject.foo):shouldBeCalled():
-    when(function() mockedObject:foo() end)
+    mach(mocked_object.foo):should_be_called():
+    when(function() mocked_object:foo() end)
   end)
 
   it('should fail when a method is incorrectly used as a function', function()
-    shouldFail(function()
-      local someObject = {}
+    should_fail(function()
+      local some_object = {}
 
-      function someObject:foo() end
+      function some_object:foo() end
 
-      local mockedObject = mock.mockObject(someObject)
+      local mocked_object = mach.mock_object(some_object)
 
-      mock(mockedObject.foo):shouldBeCalledWith(1):andWillReturn(2):
+      mach(mocked_object.foo):should_be_called_with(1):and_will_return(2):
       when(function()
-        mockedObject.foo(1)
+        mocked_object.foo(1)
       end)
     end)
   end)
 
   it('should let you expect a function to be called multiple times', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):shouldBeCalledWith(2):andWillReturn(1):multipleTimes(3):
+    mach(f):should_be_called_with(2):and_will_return(1):multiple_times(3):
     when(function()
       assert(f(2) == 1)
       assert(f(2) == 1)
@@ -247,10 +247,10 @@ describe('The mach library', function()
   end)
 
   it('should fail if a function is not called enough times', function()
-    shouldFail(function()
-      local f = mock.mockFunction()
+    should_fail(function()
+      local f = mach.mock_function()
 
-      mock(f):shouldBeCalledWith(2):andWillReturn(1):multipleTimes(3):
+      mach(f):should_be_called_with(2):and_will_return(1):multiple_times(3):
       when(function()
         assert(f(2) == 1)
         assert(f(2) == 1)
@@ -259,19 +259,19 @@ describe('The mach library', function()
   end)
 
   it('should allow after to be used as an alias for when', function()
-    local f = mock.mockFunction()
+    local f = mach.mock_function()
 
-    mock(f):shouldBeCalled():
+    mach(f):should_be_called():
     after(function()
       f()
     end)
   end)
 
   it('should fail if a function is called too many times', function()
-    shouldFail(function()
-      local f = mock.mockFunction('f')
+    should_fail(function()
+      local f = mach.mock_function('f')
 
-      mock(f):shouldBeCalledWith(2):andWillReturn(1):multipleTimes(2):
+      mach(f):should_be_called_with(2):and_will_return(1):multiple_times(2):
       when(function()
         assert(f(2) == 1)
         assert(f(2) == 1)
@@ -280,80 +280,80 @@ describe('The mach library', function()
     end)
   end)
 
-  it('should fail if andWillReturn is not preceeded by shouldBeCalled or shouldBeCalledWith', function()
-    shouldFailWith('cannot set return value for an unspecified call', function()
-      local f = mock.mockFunction('f')
-      mock(f):andWillReturn(1)
+  it('should fail if and_will_return is not preceeded by should_be_called or should_be_called_with', function()
+    should_fail_with('cannot set return value for an unspecified call', function()
+      local f = mach.mock_function('f')
+      mach(f):and_will_return(1)
     end)
   end)
 
-  it('should fail if when is not preceeded by shouldBeCalled or shouldBeCalledWith', function()
-    shouldFailWith('incomplete expectation', function()
-      local f = mock.mockFunction('f')
+  it('should fail if when is not preceeded by should_be_called or should_be_called_with', function()
+    should_fail_with('incomplete expectation', function()
+      local f = mach.mock_function('f')
 
-      mock(f):when(function() end)
+      mach(f):when(function() end)
     end)
   end)
 
-  it('should fail if after is not preceeded by shouldBeCalled or shouldBeCalledWith', function()
-    shouldFailWith('incomplete expectation', function()
-      local f = mock.mockFunction('f')
+  it('should fail if after is not preceeded by should_be_called or should_be_called_with', function()
+    should_fail_with('incomplete expectation', function()
+      local f = mach.mock_function('f')
 
-      mock(f):after(function() end)
+      mach(f):after(function() end)
     end)
   end)
 
-  it('should fail if shouldBeCalled is used after a call has already been specified', function()
-    shouldFailWith('call already specified', function()
-      local f = mock.mockFunction('f')
+  it('should fail if should_be_called is used after a call has already been specified', function()
+    should_fail_with('call already specified', function()
+      local f = mach.mock_function('f')
 
-      mock(f):shouldBeCalled():shouldBeCalled()
+      mach(f):should_be_called():should_be_called()
     end)
   end)
 
-  it('should fail if shouldBeCalledWith is used after a call has already been specified', function()
-    shouldFailWith('call already specified', function()
-      local f = mock.mockFunction('f')
+  it('should fail if should_be_called_with is used after a call has already been specified', function()
+    should_fail_with('call already specified', function()
+      local f = mach.mock_function('f')
 
-      mock(f):shouldBeCalled():shouldBeCalledWith(4)
+      mach(f):should_be_called():should_be_called_with(4)
     end)
   end)
 
-  it('should allow calls to happen out of order when andAlso is used', function()
-    local f1 = mock.mockFunction('f1')
-    local f2 = mock.mockFunction('f2')
+  it('should allow calls to happen out of order when and_also is used', function()
+    local f1 = mach.mock_function('f1')
+    local f2 = mach.mock_function('f2')
 
-    mock(f1):shouldBeCalled():
-    andAlso(mock(f2):shouldBeCalled()):
+    mach(f1):should_be_called():
+    and_also(mach(f2):should_be_called()):
     when(function()
       f2()
       f1()
     end)
 
-    mock(f1):shouldBeCalledWith(1):
-    andAlso(mock(f1):shouldBeCalledWith(2)):
+    mach(f1):should_be_called_with(1):
+    and_also(mach(f1):should_be_called_with(2)):
     when(function()
       f1(2)
       f1(1)
     end)
   end)
 
-  it('should not allow calls to happen out of order when andThen is used', function()
-    local f1 = mock.mockFunction('f1')
-    local f2 = mock.mockFunction('f2')
+  it('should not allow calls to happen out of order when and_then is used', function()
+    local f1 = mach.mock_function('f1')
+    local f2 = mach.mock_function('f2')
 
-    shouldFailWith('unexpected function call f2()', function()
-      mock(f1):shouldBeCalled():
-      andThen(mock(f2):shouldBeCalled()):
+    should_fail_with('unexpected function call f2()', function()
+      mach(f1):should_be_called():
+      and_then(mach(f2):should_be_called()):
       when(function()
         f2()
         f1()
       end)
     end)
 
-    shouldFailWith('unexpected arguments (2) provided to function f1', function()
-      mock(f1):shouldBeCalledWith(1):
-      andThen(mock(f2):shouldBeCalled(2)):
+    should_fail_with('unexpected arguments (2) provided to function f1', function()
+      mach(f1):should_be_called_with(1):
+      and_then(mach(f2):should_be_called(2)):
       when(function()
         f1(2)
         f1(1)
@@ -362,14 +362,14 @@ describe('The mach library', function()
   end)
 
   it('should catch out of order calls when mixed with unordered calls', function()
-    local f1 = mock.mockFunction('f1')
-    local f2 = mock.mockFunction('f2')
-    local f3 = mock.mockFunction('f3')
+    local f1 = mach.mock_function('f1')
+    local f2 = mach.mock_function('f2')
+    local f3 = mach.mock_function('f3')
 
-    shouldFailWith('unexpected function call f3()', function()
-      mock(f1):shouldBeCalled():
-      andAlso(mock(f2):shouldBeCalled()):
-      andThen(mock(f3):shouldBeCalled()):
+    should_fail_with('unexpected function call f3()', function()
+      mach(f1):should_be_called():
+      and_also(mach(f2):should_be_called()):
+      and_then(mach(f3):should_be_called()):
       when(function()
         f2()
         f3()
@@ -379,12 +379,12 @@ describe('The mach library', function()
   end)
 
   it('should allow ordered and unordered calls to be mixed', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):shouldBeCalledWith(1):
-    andAlso(mock(f):shouldBeCalledWith(2)):
-    andThen(mock(f):shouldBeCalledWith(3)):
-    andAlso(mock(f):shouldBeCalledWith(4)):
+    mach(f):should_be_called_with(1):
+    and_also(mach(f):should_be_called_with(2)):
+    and_then(mach(f):should_be_called_with(3)):
+    and_also(mach(f):should_be_called_with(4)):
     when(function()
       f(2)
       f(1)
@@ -394,80 +394,80 @@ describe('The mach library', function()
   end)
 
   it('should allow soft expectations to be called', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):mayBeCalled():
+    mach(f):may_be_called():
     when(function()
       f()
     end)
   end)
 
   it('should allow soft expectations to be omitted', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):mayBeCalled():
+    mach(f):may_be_called():
     when(function() end)
   end)
 
   it('should allow soft expectations with return values', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):mayBeCalled():andWillReturn(3):
+    mach(f):may_be_called():and_will_return(3):
     when(function()
       assert(f() == 3)
     end)
   end)
 
   it('should allow soft expectations with arguments to be called', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):mayBeCalledWith(4):
+    mach(f):may_be_called_with(4):
     when(function()
       f(4)
     end)
   end)
 
   it('should allow soft expectations with arguments to be omitted', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):mayBeCalledWith(4):
+    mach(f):may_be_called_with(4):
     when(function() end)
   end)
 
   it('should allow soft expectations with arguments to be omitted', function()
-    local f = mock.mockFunction('f')
+    local f = mach.mock_function('f')
 
-    mock(f):mayBeCalledWith(4):
+    mach(f):may_be_called_with(4):
     when(function() end)
   end)
 
-  it('should fail if mayBeCalled is used after a call has already been specified', function()
-    shouldFailWith('call already specified', function()
-      local f = mock.mockFunction('f')
+  it('should fail if may_be_called is used after a call has already been specified', function()
+    should_fail_with('call already specified', function()
+      local f = mach.mock_function('f')
 
-      mock(f):shouldBeCalled():mayBeCalled()
+      mach(f):should_be_called():may_be_called()
     end)
   end)
 
-  it('should fail if mayBeCalledWith is used after a call has already been specified', function()
-    shouldFailWith('call already specified', function()
-      local f = mock.mockFunction('f')
+  it('should fail if may_be_called_with is used after a call has already been specified', function()
+    should_fail_with('call already specified', function()
+      local f = mach.mock_function('f')
 
-      mock(f):shouldBeCalled():mayBeCalledWith(4)
+      mach(f):should_be_called():may_be_called_with(4)
     end)
   end)
 
   it('should handle unexpected alls outside of an expectation', function()
-    shouldFailWith('unexpected function call f(1, 2, 3)', function()
-      mock.mockFunction('f')(1, 2, 3)
+    should_fail_with('unexpected function call f(1, 2, 3)', function()
+      mach.mock_function('f')(1, 2, 3)
     end)
   end)
 
   it('should handle table arguments in error messages', function()
     local a = {}
 
-    shouldFailWith('unexpected function call f(' .. tostring(a) ..')', function()
-      mock.mockFunction('f')(a)
+    should_fail_with('unexpected function call f(' .. tostring(a) ..')', function()
+      mach.mock_function('f')(a)
     end)
   end)
 end)
