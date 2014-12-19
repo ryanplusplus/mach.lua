@@ -1,4 +1,6 @@
-ExpectedCall = require 'mach.expected-call'
+local ExpectedCall = require 'mach.expected-call'
+local UnexpectedCallError = require 'mach.unexpected-call-error'
+local UnexpectedArgsError = require 'mach.unexpected-args-error'
 
 local expectation = {}
 expectation.__index = expectation
@@ -52,9 +54,9 @@ function expectation:when(thunk)
     end
 
     if not validFunctionFound then
-      error('unexpected function call ' .. name .. '(' .. table.concat(args, ', ') .. ')', 2)
+      UnexpectedCallError(name, args, 2)
     else
-      error('unexpected arguments (' .. table.concat(args, ', ') .. ') provided to function ' .. name, 2)
+      UnexpectedArgsError(name, args, 2)
     end
   end
 

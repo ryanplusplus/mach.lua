@@ -1,5 +1,5 @@
 describe('The mach library', function()
-  mock = require 'mach'
+  local mock = require 'mach'
 
   local function shouldFail(test)
     if pcall(test) then
@@ -454,6 +454,20 @@ describe('The mach library', function()
       local f = mock.mockFunction('f')
 
       mock(f):shouldBeCalled():mayBeCalledWith(4)
+    end)
+  end)
+
+  it('should handle unexpected alls outside of an expectation', function()
+    shouldFailWith('unexpected function call f(1, 2, 3)', function()
+      mock.mockFunction('f')(1, 2, 3)
+    end)
+  end)
+
+  it('should handle table arguments in error messages', function()
+    local a = {}
+
+    shouldFailWith('unexpected function call f(' .. tostring(a) ..')', function()
+      mock.mockFunction('f')(a)
     end)
   end)
 end)
