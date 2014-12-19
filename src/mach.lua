@@ -1,14 +1,19 @@
 local ExpectedCall = require 'mach.expected-call'
 local Expectation = require 'mach.expectation'
+local UnexpectedCallError = require 'mach.unexpected-call-error'
 
 local Mock = {}
 
-local subscriber
+function unexpectedCall(m, name, args)
+  UnexpectedCallError(name, args, 2)
+end
+
+local subscriber = unexpectedCall
 
 function handleMockCalls(callback, thunk)
   subscriber = callback
   thunk()
-  subscriber = nil
+  subscriber = unexpectedCall
 end
 
 function mockCalled(m, name, args)
