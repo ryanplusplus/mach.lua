@@ -10,9 +10,7 @@ mach = require 'mach'
 
 local f = mach.mock_function()
 
-f:should_be_called():when(
-  function() f()
-end)
+f:should_be_called():when(function() f() end)
 ```
 
 ## Mocking a Method
@@ -23,9 +21,7 @@ mach = require 'mach'
 local o = {}
 o.m = mach.mach_method()
 
-m:should_be_called():when(
-  function() o:m()
-end)
+m:should_be_called():when(function() o:m() end)
 ```
 
 ## Mocking a Table
@@ -40,8 +36,8 @@ local some_table = {
 
 mocked_table = mach.mockTable(some_table)
 
-mocked_table.foo:should_be_called():when(
-  function() mocked_table.foo()
+mocked_table.foo:should_be_called():when(function()
+  mocked_table.foo()
 end)
 ```
 
