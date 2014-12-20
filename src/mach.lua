@@ -24,11 +24,11 @@ function mach.mock_function(name)
   name = name or '<anonymous>'
   local f = {}
 
-  function fCall(_, ...)
+  function f_call(_, ...)
     return mock_called(f, name, table.pack(...))
   end
 
-  setmetatable(f, {__call = fCall})
+  setmetatable(f, {__call = f_call})
 
   return f
 end
@@ -47,7 +47,7 @@ function mach.mock_method(name)
   return m
 end
 
-function isCallable(x)
+function is_callable(x)
   local is_function = type(x) == 'function'
   local has_call_metamethod = type((debug.getmetatable(x) or {}).__call) == 'function'
   return is_function or has_call_metamethod
@@ -58,7 +58,7 @@ function mach.mock_table(t, name)
   local mocked = {}
 
   for k, v in pairs(t) do
-    if isCallable(v) then
+    if is_callable(v) then
       mocked[k] = mach.mock_function(name .. '.' .. tostring(k))
     end
   end
@@ -71,7 +71,7 @@ function mach.mock_object(o, name)
   local mocked = {}
 
   for k, v in pairs(o) do
-    if isCallable(v) then
+    if is_callable(v) then
       mocked[k] = mach.mock_method(name .. ':' .. tostring(k))
     end
   end
