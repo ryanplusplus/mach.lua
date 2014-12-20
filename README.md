@@ -10,8 +10,9 @@ mach = require 'mach'
 
 local f = mach.mock_function()
 
-f:should_be_called():
-when(function() f() end)
+f:should_be_called():when(
+  function() f()
+end)
 ```
 
 ## Mocking a Method
@@ -22,8 +23,9 @@ mach = require 'mach'
 local o = {}
 o.m = mach.mach_method()
 
-m:should_be_called():
-when(function() o:m() end)
+m:should_be_called():when(
+  function() o:m()
+end)
 ```
 
 ## Mocking a Table
@@ -38,8 +40,9 @@ local some_table = {
 
 mocked_table = mach.mockTable(some_table)
 
-mocked_table.foo:should_be_called():
-when(function() mocked_table.foo() end)
+mocked_table.foo:should_be_called():when(
+  function() mocked_table.foo()
+end)
 ```
 
 ## Mocking an Object
@@ -53,8 +56,9 @@ function some_object:bar() end
 
 mocked_object = mach.mock_object(some_object)
 
-mocked_object.foo:should_be_called():
-when(function() mocked_object:foo() end)
+mocked_object.foo:should_be_called():when(function()
+  mocked_object:foo()
+end)
 ```
 
 ## Multiple Expectations
@@ -66,8 +70,11 @@ local f1 = mach.mock_function()
 local f2 = mach.mock_function()
 
 f1:should_be_called():
-and_also(f2:should_be_called()):
-when(function() f1(); f2() end)
+  and_also(f2:should_be_called()):
+  when(function()
+    f1()
+    f2()
+  end)
 ```
 
 ## Optional Expectations
@@ -77,8 +84,7 @@ mach = require 'mach'
 
 local f = mach.mock_function()
 
-f:mayBeCalled():
-when(function() end)
+f:mayBeCalled():when(function() end)
 ```
 
 ## Optional Ordering
@@ -90,19 +96,19 @@ local f = mach.mock_function()
 
 -- Use and_also when order is important
 f:should_be_called_with(1):
-and_then(f:should_be_called_with(2)):
-when(function()
-  f(2) -- Error, out of order call
-  f(1)
-end)
+  and_then(f:should_be_called_with(2)):
+  when(function()
+    f(2) -- Error, out of order call
+    f(1)
+  end)
 
 -- Use and_also when order is unimportant
 f:should_be_called_with(1):
-and_also(f:should_be_called_with(2)):
-when(function()
-  f(2) -- No error, order is not fixed when 'and_also' is used
-  f(1)
-end)
+  and_also(f:should_be_called_with(2)):
+  when(function()
+    f(2) -- No error, order is not fixed when 'and_also' is used
+    f(1)
+  end)
 ```
 
 ## Mixed Ordering
@@ -113,15 +119,15 @@ mach = require 'mach'
 local f = mach.mock_function()
 
 f:should_be_called_with(1):
-and_also(f:should_be_called_with(2)):
-and_then(f:should_be_called_with(3)):
-and_also(f:should_be_called_with(4)):
-when(function()
-  f(2)
-  f(1)
-  f(4)
-  f(3)
-end)
+  and_also(f:should_be_called_with(2)):
+  and_then(f:should_be_called_with(3)):
+  and_also(f:should_be_called_with(4)):
+  when(function()
+    f(2)
+    f(1)
+    f(4)
+    f(3)
+  end)
 ```
 
 ## Flexible Syntax
@@ -147,6 +153,6 @@ end
 
 -- Actual test:
 something_should_happen():
-and_also(another_thing_should_happen()):
-when(the_code_under_test_runs)
+  and_also(another_thing_should_happen()):
+  when(the_code_under_test_runs)
 ```

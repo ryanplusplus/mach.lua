@@ -21,16 +21,14 @@ describe('The mach library', function()
   it('should allow you to verify that a function is called', function()
     local f = mach.mock_function('f')
 
-    f:should_be_called():
-    when(function() f() end)
+    f:should_be_called():when(function() f() end)
   end)
 
   it('should alert you when a function is not called', function()
     local f = mach.mock_function('f')
 
     should_fail_with('not all calls occurred', function()
-      f:should_be_called():
-      when(function() end)
+      f:should_be_called():when(function() end)
     end)
   end)
 
@@ -39,8 +37,7 @@ describe('The mach library', function()
     local f2 = mach.mock_function('f2')
 
     should_fail_with('unexpected function call f2()', function()
-      f1:should_be_called():
-      when(function() f2() end)
+      f1:should_be_called():when(function() f2() end)
     end)
   end)
 
@@ -55,24 +52,21 @@ describe('The mach library', function()
   it('should allow you to verify that a function has been called with the correct arguments', function()
     local f = mach.mock_function('f')
 
-    f:should_be_called_with(1, '2'):
-    when(function() f(1, '2') end)
+    f:should_be_called_with(1, '2'):when(function() f(1, '2') end)
   end)
 
   it('should alert you when a function has been called with incorrect arguments', function()
     local f = mach.mock_function('f')
 
     should_fail(function()
-      f:should_be_called_with(1, '2'):
-      when(function() f(1, '3') end)
+      f:should_be_called_with(1, '2'):when(function() f(1, '3') end)
     end)
   end)
 
   it('should allow you to specify the return value of a mocked function', function()
     local f = mach.mock_function('f')
 
-    f:should_be_called():and_will_return(4):
-    when(function()
+    f:should_be_called():and_will_return(4):when(function()
       assert.is.equal(f(), 4)
     end)
   end)
@@ -80,8 +74,7 @@ describe('The mach library', function()
   it('should allow you to specify multiple return values for a mocked function', function()
     local f = mach.mock_function('f')
 
-    f:should_be_called():and_will_return(1, 2):
-    when(function()
+    f:should_be_called():and_will_return(1, 2):when(function()
       r1, r2 = f()
       assert.is.equal(r1, 1)
       assert.is.equal(r2, 2)
@@ -92,11 +85,11 @@ describe('The mach library', function()
     local f = mach.mock_function('f')
 
     f:should_be_called():
-    and_also(f:should_be_called_with(1, 2, 3)):
-    when(function()
-      f()
-      f(1, 2, 3)
-    end)
+      and_also(f:should_be_called_with(1, 2, 3)):
+      when(function()
+        f()
+        f(1, 2, 3)
+      end)
   end)
 
   it('should allow you to check that multiple functions are called', function()
@@ -104,11 +97,11 @@ describe('The mach library', function()
     local f2 = mach.mock_function('f2')
 
     f1:should_be_called():
-    and_also(f2:should_be_called_with(1, 2, 3)):
-    when(function()
-      f1()
-      f2(1, 2, 3)
-    end)
+      and_also(f2:should_be_called_with(1, 2, 3)):
+      when(function()
+        f1()
+        f2(1, 2, 3)
+      end)
   end)
 
   it('should allow you to mix and match call types', function()
@@ -116,13 +109,13 @@ describe('The mach library', function()
     local f2 = mach.mock_function('f2')
 
     f1:should_be_called():
-    and_also(f2:should_be_called_with(1, 2, 3)):
-    and_then(f2:should_be_called_with(1):and_will_return(4)):
-    when(function()
-      f1()
-      f2(1, 2, 3)
-      assert.is.equal(f2(1), 4)
-    end)
+      and_also(f2:should_be_called_with(1, 2, 3)):
+      and_then(f2:should_be_called_with(1):and_will_return(4)):
+      when(function()
+        f1()
+        f2(1, 2, 3)
+        assert.is.equal(f2(1), 4)
+      end)
   end)
 
   it('should allow functions to be used to improve readability', function()
@@ -143,8 +136,8 @@ describe('The mach library', function()
     end
 
     something_should_happen():
-    and_also(another_thing_should_happen()):
-    when(the_code_under_test_runs)
+      and_also(another_thing_should_happen()):
+      when(the_code_under_test_runs)
   end)
 
   it('should allow a table of functions to be mocked', function()
@@ -156,11 +149,11 @@ describe('The mach library', function()
     mocked_table = mach.mock_table(some_table, 'some_table')
 
     mocked_table.foo:should_be_called_with(1):and_will_return(2):
-    and_also(mocked_table.bar:should_be_called()):
-    when(function()
-      mocked_table.foo(1)
-      mocked_table.bar()
-    end)
+      and_also(mocked_table.bar:should_be_called()):
+      when(function()
+        mocked_table.foo(1)
+        mocked_table.bar()
+      end)
   end)
 
   it('should fail when a function is incorrectly used as a method', function()
@@ -171,8 +164,7 @@ describe('The mach library', function()
 
       mocked_table = mach.mock_table(some_table)
 
-      mocked_table.foo:should_be_called_with(1):and_will_return(2):
-      when(function()
+      mocked_table.foo:should_be_called_with(1):and_will_return(2):when(function()
         mocked_table:foo(1)
       end)
     end)
@@ -187,11 +179,11 @@ describe('The mach library', function()
     local mocked_object = mach.mock_object(some_object)
 
     mocked_object.foo:should_be_called_with(1):and_will_return(2):
-    and_also(mocked_object.bar:should_be_called()):
-    when(function()
-      mocked_object:foo(1)
-      mocked_object:bar()
-    end)
+      and_also(mocked_object.bar:should_be_called()):
+      when(function()
+        mocked_object:foo(1)
+        mocked_object:bar()
+      end)
   end)
 
   it('should allow mocking of any callable in an object, not just functions', function()
@@ -203,8 +195,7 @@ describe('The mach library', function()
 
     local mocked_table = mach.mock_table(some_table)
 
-    mocked_table.foo:should_be_called():
-    when(function() mocked_table.foo() end)
+    mocked_table.foo:should_be_called():when(function() mocked_table.foo() end)
   end)
 
   it('should allow mocking of any callable in a table, not just functions', function()
@@ -216,8 +207,7 @@ describe('The mach library', function()
 
     local mocked_object = mach.mock_object(some_object)
 
-    mocked_object.foo:should_be_called():
-    when(function() mocked_object:foo() end)
+    mocked_object.foo:should_be_called():when(function() mocked_object:foo() end)
   end)
 
   it('should fail when a method is incorrectly used as a function', function()
@@ -228,8 +218,7 @@ describe('The mach library', function()
 
       local mocked_object = mach.mock_object(some_object)
 
-      mocked_object.foo:should_be_called_with(1):and_will_return(2):
-      when(function()
+      mocked_object.foo:should_be_called_with(1):and_will_return(2):when(function()
         mocked_object.foo(1)
       end)
     end)
@@ -238,8 +227,7 @@ describe('The mach library', function()
   it('should let you expect a function to be called multiple times', function()
     local f = mach.mock_function('f')
 
-    f:should_be_called_with(2):and_will_return(1):multiple_times(3):
-    when(function()
+    f:should_be_called_with(2):and_will_return(1):multiple_times(3):when(function()
       assert(f(2) == 1)
       assert(f(2) == 1)
       assert(f(2) == 1)
@@ -250,8 +238,7 @@ describe('The mach library', function()
     should_fail(function()
       local f = mach.mock_function()
 
-      f:should_be_called_with(2):and_will_return(1):multiple_times(3):
-      when(function()
+      f:should_be_called_with(2):and_will_return(1):multiple_times(3):when(function()
         assert(f(2) == 1)
         assert(f(2) == 1)
       end)
@@ -261,18 +248,14 @@ describe('The mach library', function()
   it('should allow after to be used as an alias for when', function()
     local f = mach.mock_function()
 
-    f:should_be_called():
-    after(function()
-      f()
-    end)
+    f:should_be_called():after(function() f() end)
   end)
 
   it('should fail if a function is called too many times', function()
     should_fail(function()
       local f = mach.mock_function('f')
 
-      f:should_be_called_with(2):and_will_return(1):multiple_times(2):
-      when(function()
+      f:should_be_called_with(2):and_will_return(1):multiple_times(2):when(function()
         assert(f(2) == 1)
         assert(f(2) == 1)
         assert(f(2) == 1)
@@ -324,18 +307,18 @@ describe('The mach library', function()
     local f2 = mach.mock_function('f2')
 
     f1:should_be_called():
-    and_also(f2:should_be_called()):
-    when(function()
-      f2()
-      f1()
-    end)
+      and_also(f2:should_be_called()):
+      when(function()
+        f2()
+        f1()
+      end)
 
     f1:should_be_called_with(1):
-    and_also(f1:should_be_called_with(2)):
-    when(function()
-      f1(2)
-      f1(1)
-    end)
+      and_also(f1:should_be_called_with(2)):
+      when(function()
+        f1(2)
+        f1(1)
+      end)
   end)
 
   it('should not allow calls to happen out of order when and_then is used', function()
@@ -344,20 +327,20 @@ describe('The mach library', function()
 
     should_fail_with('unexpected function call f2()', function()
       f1:should_be_called():
-      and_then(f2:should_be_called()):
-      when(function()
-        f2()
-        f1()
-      end)
+        and_then(f2:should_be_called()):
+        when(function()
+          f2()
+          f1()
+        end)
     end)
 
     should_fail_with('unexpected arguments (2) provided to function f1', function()
       f1:should_be_called_with(1):
-      and_then(f2:should_be_called(2)):
-      when(function()
-        f1(2)
-        f1(1)
-      end)
+        and_then(f2:should_be_called(2)):
+        when(function()
+          f1(2)
+          f1(1)
+        end)
     end)
   end)
 
@@ -368,13 +351,13 @@ describe('The mach library', function()
 
     should_fail_with('unexpected function call f3()', function()
       f1:should_be_called():
-      and_also(f2:should_be_called()):
-      and_then(f3:should_be_called()):
-      when(function()
-        f2()
-        f3()
-        f1()
-      end)
+        and_also(f2:should_be_called()):
+        and_then(f3:should_be_called()):
+        when(function()
+          f2()
+          f3()
+          f1()
+        end)
     end)
   end)
 
@@ -382,36 +365,33 @@ describe('The mach library', function()
     local f = mach.mock_function('f')
 
     f:should_be_called_with(1):
-    and_also(f:should_be_called_with(2)):
-    and_then(f:should_be_called_with(3)):
-    and_also(f:should_be_called_with(4)):
-    when(function()
-      f(2)
-      f(1)
-      f(4)
-      f(3)
-    end)
+      and_also(f:should_be_called_with(2)):
+      and_then(f:should_be_called_with(3)):
+      and_also(f:should_be_called_with(4)):
+      when(function()
+        f(2)
+        f(1)
+        f(4)
+        f(3)
+      end)
   end)
 
   it('should allow soft expectations to be called', function()
     local f = mach.mock_function('f')
 
-    f:may_be_called():
-    when(function() f() end)
+    f:may_be_called():when(function() f() end)
   end)
 
   it('should allow soft expectations to be omitted', function()
     local f = mach.mock_function('f')
 
-    f:may_be_called():
-    when(function() end)
+    f:may_be_called():when(function() end)
   end)
 
   it('should allow soft expectations with return values', function()
     local f = mach.mock_function('f')
 
-    f:may_be_called():and_will_return(3):
-    when(function()
+    f:may_be_called():and_will_return(3):when(function()
       assert(f() == 3)
     end)
   end)
@@ -419,18 +399,15 @@ describe('The mach library', function()
   it('should allow soft expectations with arguments to be called', function()
     local f = mach.mock_function('f')
 
-    f:may_be_called_with(4):
-    when(function() f(4) end)
+    f:may_be_called_with(4):when(function() f(4) end)
 
-    f:may_be_called_with(4):
-    when(function() f(4) end)
+    f:may_be_called_with(4):when(function() f(4) end)
   end)
 
   it('should allow soft expectations with arguments to be omitted', function()
     local f = mach.mock_function('f')
 
-    f:may_be_called_with(4):
-    when(function() end)
+    f:may_be_called_with(4):when(function() end)
   end)
 
   it('should fail if may_be_called is used after a call has already been specified', function()
