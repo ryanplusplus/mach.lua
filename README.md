@@ -90,7 +90,7 @@ local f = mach.mock_function()
 
 -- Use and_also when order is important
 f:should_be_called_with(1):
-andThen(f:should_be_called_with(2)):
+and_then(f:should_be_called_with(2)):
 when(function()
   f(2) -- Error, out of order call
   f(1)
@@ -114,7 +114,7 @@ local f = mach.mock_function()
 
 f:should_be_called_with(1):
 and_also(f:should_be_called_with(2)):
-andThen(f:should_be_called_with(3)):
+and_then(f:should_be_called_with(3)):
 and_also(f:should_be_called_with(4)):
 when(function()
   f(2)
