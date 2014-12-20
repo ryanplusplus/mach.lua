@@ -20,6 +20,13 @@ function mock_called(m, name, args)
   return subscriber(m, name, args)
 end
 
+function create_expectation(_, method)
+  return function(self, ...)
+    local expectation = Expectation(self)
+    return expectation[method](expectation, ...)
+  end
+end
+
 function mach.mock_function(name)
   name = name or '<anonymous>'
   local f = {}
@@ -29,12 +36,7 @@ function mach.mock_function(name)
       return mock_called(f, name, table.pack(...))
     end,
 
-    __index = function(_, method)
-      return function(self, ...)
-        local expectation = Expectation(self)
-        return expectation[method](expectation, ...)
-      end
-    end
+    __index = create_expectation
   })
 
   return f
@@ -50,12 +52,7 @@ function mach.mock_method(name)
       return mock_called(m, name, args)
     end,
 
-    __index = function(_, method)
-      return function(self, ...)
-        local expectation = Expectation(self)
-        return expectation[method](expectation, ...)
-      end
-    end
+    __index = create_expectation
   })
 
   return m
