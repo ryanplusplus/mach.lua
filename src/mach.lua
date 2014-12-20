@@ -24,11 +24,18 @@ function mach.mock_function(name)
   name = name or '<anonymous>'
   local f = {}
 
-  function f_call(_, ...)
-    return mock_called(f, name, table.pack(...))
-  end
+  setmetatable(f, {
+    __call = function(_, ...)
+      return mock_called(f, name, table.pack(...))
+    end,
 
-  setmetatable(f, {__call = f_call})
+    __index = function(_, method)
+      return function(self, ...)
+        local expectation = Expectation(self)
+        return expectation[method](expectation, ...)
+      end
+    end
+  })
 
   return f
 end
@@ -37,12 +44,19 @@ function mach.mock_method(name)
   name = name or '<anonymous>'
   local m = {}
 
-  function mCall(_, _, ...)
-    local args = table.pack(...)
-    return mock_called(m, name, args)
-  end
+  setmetatable(m, {
+    __call = function(_, _, ...)
+      local args = table.pack(...)
+      return mock_called(m, name, args)
+    end,
 
-  setmetatable(m, {__call = mCall})
+    __index = function(_, method)
+      return function(self, ...)
+        local expectation = Expectation(self)
+        return expectation[method](expectation, ...)
+      end
+    end
+  })
 
   return m
 end
@@ -79,6 +93,4 @@ function mach.mock_object(o, name)
   return mocked
 end
 
-setmetatable(mach, { __call = function(_, ...) return Expectation(...) end })
-
-return mach
+return setmetatable(mach, { __call = function(_, ...) return Expectation(...) end })
