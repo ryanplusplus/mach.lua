@@ -6,7 +6,7 @@ Simple mocking framework for Lua inspired by CppUMock and designed for readabili
 ## Mocking a Function
 
 ```lua
-mach = require 'mach'
+local mach = require 'mach'
 
 local f = mach.mock_function()
 
@@ -16,7 +16,7 @@ f:should_be_called():when(function() f() end)
 ## Mocking a Method
 
 ```lua
-mach = require 'mach'
+local mach = require 'mach'
 
 local o = {}
 o.m = mach.mach_method()
@@ -27,7 +27,7 @@ m:should_be_called():when(function() o:m() end)
 ## Mocking a Table
 
 ```lua
-mach = require 'mach'
+local mach = require 'mach'
 
 local some_table = {
   foo = function() end,
@@ -44,7 +44,7 @@ end)
 ## Mocking an Object
 
 ```lua
-mach = require 'mach'
+local mach = require 'mach'
 
 local some_object = {}
 function some_object:foo() end
@@ -60,7 +60,7 @@ end)
 ## Multiple Expectations
 
 ```lua
-mach = require 'mach'
+local mach = require 'mach'
 
 local f1 = mach.mock_function()
 local f2 = mach.mock_function()
@@ -76,7 +76,7 @@ f1:should_be_called():
 ## Optional Expectations
 
 ```lua
-mach = require 'mach'
+local mach = require 'mach'
 
 local f = mach.mock_function()
 
@@ -86,7 +86,7 @@ f:mayBeCalled():when(function() end)
 ## Optional Ordering
 
 ```lua
-mach = require 'mach'
+local mach = require 'mach'
 
 local f = mach.mock_function()
 
@@ -110,7 +110,7 @@ f:should_be_called_with(1):
 ## Mixed Ordering
 
 ```lua
-mach = require 'mach'
+local mach = require 'mach'
 
 local f = mach.mock_function()
 
@@ -129,7 +129,7 @@ f:should_be_called_with(1):
 ## Flexible Syntax
 
 ```lua
-mach = require 'mach'
+local mach = require 'mach'
 
 local m1 = mach.mock_function()
 local m2 = mach.mock_function()
