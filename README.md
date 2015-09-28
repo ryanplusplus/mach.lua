@@ -90,7 +90,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function()
 
--- Use and_also when order is important
+-- Use and_then when order is important
 f:should_be_called_with(1):
   and_then(f:should_be_called_with(2)):
   when(function()
