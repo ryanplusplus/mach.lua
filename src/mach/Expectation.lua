@@ -27,6 +27,16 @@ function expectation:and_will_return(...)
   return self
 end
 
+function expectation:and_will_raise_error(...)
+  -- if not self._call_specified then
+  --   error('cannot set return value for an unspecified call', 2)
+  -- end
+
+  self._calls[#self._calls]:set_error(...)
+
+  return self
+end
+
 function expectation:when(thunk)
   if not self._call_specified then
     error('incomplete expectation', 2)
@@ -46,7 +56,13 @@ function expectation:when(thunk)
             self._calls[i - 1]:fix_order()
           end
 
-          return table.remove(self._calls, i):get_return_values()
+          table.remove(self._calls, i)
+
+          if call:has_error() then
+            error(call:get_error())
+          end
+
+          return call:get_return_values()
         end
       end
 

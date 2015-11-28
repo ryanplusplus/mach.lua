@@ -37,6 +37,18 @@ function expected_call:get_return_values(...)
   return table.unpack(self._return)
 end
 
+function expected_call:set_error(...)
+  self._error = table.pack(...)
+end
+
+function expected_call:get_error(...)
+  return table.unpack(self._error)
+end
+
+function expected_call:has_error()
+  return self._error ~= nil
+end
+
 function expected_call:fix_order()
   self._ordered = true
 end

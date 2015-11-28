@@ -81,6 +81,30 @@ describe('The mach library', function()
     end)
   end)
 
+  it('should allow you to specify errors to be raised when a mocked function is called', function()
+    local f = mach.mock_function('f')
+
+    f:should_be_called():
+      and_will_raise_error('some error message'):
+      when(function()
+        should_fail_with('some error message', function()
+          f()
+        end)
+      end)
+  end)
+
+  it('should allow calls to be completed after a call that raises an error', function()
+    local f = mach.mock_function('f')
+
+    f:should_be_called():
+      and_will_raise_error('some error message'):
+      and_then(f:should_be_called():and_will_return(4)):
+      when(function()
+        pcall(function() f() end)
+        assert.is.equal(f(), 4)
+      end)
+  end)
+
   it('should allow you to check that a function has been called multiple times', function()
     local f = mach.mock_function('f')
 
