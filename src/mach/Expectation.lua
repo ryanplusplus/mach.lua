@@ -43,13 +43,13 @@ function expectation:when(thunk)
     error('incomplete expectation', 2)
   end
 
-  local current = 1
+  local current_call_index = 1
 
   local function called(m, name, args)
     local valid_function_found = false
     local incomplete_expectation_found = false
 
-    for i = current, #self._calls do
+    for i = current_call_index, #self._calls do
       local call = self._calls[i]
 
       if call:function_matches(m) then
@@ -61,7 +61,7 @@ function expectation:when(thunk)
           end
 
           if call:has_fixed_order() then
-            current = i
+            current_call_index = i
           end
 
           table.remove(self._calls, i)
