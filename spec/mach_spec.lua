@@ -16,9 +16,20 @@ describe('The mach library', function()
     local result, actualMessage = pcall(test)
     _, _, actualMessage = actualMessage:find(":%w+: (.+)")
 
-    if(result) then
+    if result then
       error('expected failure did not occur')
-    elseif(actualMessage ~= expectedMessage) then
+    elseif not actualMessage:find(expectedMessage, 1, true) then
+      error('expected failure message: "' .. expectedMessage .. '" did not match actual failure message: "' .. actualMessage .. '"')
+    end
+  end
+
+  local function should_fail_with_exactly(expectedMessage, test)
+    local result, actualMessage = pcall(test)
+    _, _, actualMessage = actualMessage:find(":%w+: (.+)")
+
+    if result then
+      error('expected failure did not occur')
+    elseif actualMessage ~= expectedMessage then
       error('expected failure message: "' .. expectedMessage .. '" did not match actual failure message: "' .. actualMessage .. '"')
     end
   end
@@ -480,7 +491,7 @@ describe('The mach library', function()
     end)
   end)
 
-  it('should give mocked functions a default name when none is provided', function()
+  it('should give mocked methods a default name when none is provided', function()
     should_fail_with('unexpected function call <anonymous>(2, 3)', function()
       mach.mock_method()(1, 2, 3)
     end)
@@ -490,6 +501,132 @@ describe('The mach library', function()
     f1:should_be_called():and_other_calls_should_be_ignored():when(function()
       f1()
       f2()
+    end)
+  end)
+
+  it('should report completed and incomplete calls in unexpected call errors', function()
+    local expected_failure =
+      'unexpected function call f3()\n' ..
+      'completed calls:\n' ..
+      '\tf1()\n' ..
+      'incomplete calls:\n' ..
+      '\tf2()'
+
+    should_fail_with_exactly(expected_failure, function()
+      f1:should_be_called():and_also(f2:should_be_called()):when(function()
+        f1()
+        f3()
+      end)
+    end)
+  end)
+
+  it('should report completed and incomplete calls in unexpected argument errors', function()
+    local expected_failure =
+      'unexpected arguments (3) provided to function f2\n' ..
+      'completed calls:\n' ..
+      '\tf1()\n' ..
+      'incomplete calls:\n' ..
+      '\tf2()'
+
+    should_fail_with_exactly(expected_failure, function()
+      f1:should_be_called():and_also(f2:should_be_called()):when(function()
+        f1()
+        f2(3)
+      end)
+    end)
+  end)
+
+  it('should report completed and incomplete calls in out of order call errors', function()
+    local expected_failure =
+      'out of order function call f3()\n' ..
+      'completed calls:\n' ..
+      '\tf1()\n' ..
+      'incomplete calls:\n' ..
+      '\tf2()\n' ..
+      '\tf3()'
+
+    should_fail_with_exactly(expected_failure, function()
+      f1:should_be_called():
+        and_then(f2:should_be_called()):
+        and_then(f3:should_be_called()):
+        when(function()
+          f1()
+          f3()
+        end)
+    end)
+  end)
+
+  it('should omit the completed call list in an error when no calls were completed', function()
+    local expected_failure =
+      'unexpected function call f3()\n' ..
+      'incomplete calls:\n' ..
+      '\tf1()'
+
+    should_fail_with_exactly(expected_failure, function()
+      f1:should_be_called():when(function()
+        f3()
+      end)
+    end)
+  end)
+
+  it('should omit the incomplete call list in an error when all calls were completed', function()
+    local expected_failure =
+      'unexpected function call f3()\n' ..
+      'completed calls:\n' ..
+      '\tf1()'
+
+    should_fail_with_exactly(expected_failure, function()
+      f1:should_be_called():when(function()
+        f1()
+        f3()
+      end)
+    end)
+  end)
+
+  it('should show methods in call status messages', function()
+    local o = {
+      m = mach.mock_method('m')
+    }
+
+    local expected_failure =
+      'unexpected function call f()\n' ..
+      'incomplete calls:\n' ..
+      '\tm()'
+
+    should_fail_with_exactly(expected_failure, function()
+      o.m:should_be_called():when(function()
+          f()
+        end)
+    end)
+  end)
+
+  it('should show optional function calls as optional in call status messages', function()
+    local expected_failure =
+      'unexpected function call f3()\n' ..
+      'completed calls:\n' ..
+      '\tf1()\n' ..
+      'incomplete calls:\n' ..
+      '\tf2() (optional)'
+
+    should_fail_with_exactly(expected_failure, function()
+      f1:should_be_called():and_also(f2:may_be_called()):when(function()
+        f1()
+        f3()
+      end)
+    end)
+  end)
+
+  it('should show actual arguments in call status messages', function()
+    local expected_failure =
+      'unexpected function call f3()\n' ..
+      'completed calls:\n' ..
+      '\tf1(1, 2, 3)'
+
+    should_fail_with_exactly(expected_failure, function()
+      f1:should_be_called_with_any_arguments():when(function()
+        f1(1, 2, 3)
+        f3()
+      end)
     end)
   end)
 end)

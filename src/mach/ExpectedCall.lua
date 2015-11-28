@@ -1,6 +1,21 @@
 local expected_call = {}
 expected_call.__index = expected_call
 
+expected_call.__tostring = function(self)
+  local arg_strings = {}
+  for _, arg in ipairs(self._args) do
+    table.insert(arg_strings, tostring(arg))
+  end
+
+  local s = self._f._name .. '(' .. table.concat(arg_strings, ', ') .. ')'
+
+  if not self._required then
+    s = s .. ' (optional)'
+  end
+
+  return s
+end
+
 local function create(f, config)
   local o = {
     _f = f,

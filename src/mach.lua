@@ -5,7 +5,7 @@ local unexpected_call_error = require 'mach.unexpected_call_error'
 local mach = {}
 
 function unexpected_call(m, name, args)
-  unexpected_call_error(name, args, 2)
+  unexpected_call_error(name, args, {}, {}, 2)
 end
 
 local subscriber = unexpected_call
@@ -29,7 +29,7 @@ end
 
 function mach.mock_function(name)
   name = name or '<anonymous>'
-  local f = {}
+  local f = { _name = name }
 
   setmetatable(f, {
     __call = function(_, ...)
@@ -44,7 +44,7 @@ end
 
 function mach.mock_method(name)
   name = name or '<anonymous>'
-  local m = {}
+  local m = { _name = name }
 
   setmetatable(m, {
     __call = function(_, _, ...)

@@ -1,4 +1,5 @@
 local ExpectedCall = require 'mach.ExpectedCall'
+local CompletedCall = require 'mach.CompletedCall'
 local unexpected_call_error = require 'mach.unexpected_call_error'
 local unexpected_args_error = require 'mach.unexpected_args_error'
 local out_of_order_call_error = require 'mach.out_of_order_call_error'
@@ -10,7 +11,8 @@ local function create(m)
   local o = {
     _m = m,
     _call_specified = false,
-    _calls = {}
+    _calls = {},
+    _completed_calls = {}
   }
 
   setmetatable(o, expectation)
@@ -57,7 +59,7 @@ function expectation:when(thunk)
 
         if call:args_match(args) then
           if call:has_fixed_order() and incomplete_expectation_found then
-            out_of_order_call_error(name, args, 2)
+            out_of_order_call_error(name, args, self._completed_calls, self._calls, 2)
           end
 
           if call:has_fixed_order() then
@@ -65,6 +67,8 @@ function expectation:when(thunk)
           end
 
           table.remove(self._calls, i)
+
+          table.insert(self._completed_calls, CompletedCall(name, args))
 
           if call:has_error() then
             error(call:get_error())
@@ -81,9 +85,9 @@ function expectation:when(thunk)
 
     if not self._ignore_other_calls then
       if not valid_function_found then
-        unexpected_call_error(name, args, 2)
+        unexpected_call_error(name, args, self._completed_calls, self._calls, 2)
       else
-        unexpected_args_error(name, args, 2)
+        unexpected_args_error(name, args, self._completed_calls, self._calls, 2)
       end
     end
   end
