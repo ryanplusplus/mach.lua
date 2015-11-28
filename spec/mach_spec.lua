@@ -202,6 +202,22 @@ describe('The mach library', function()
       end)
   end)
 
+  it('should allow a mocked object to be named', function()
+    mocked_object = mach.mock_object({ foo = function() end }, 'some_object')
+
+    should_fail_with('unexpected function call some_object:foo()', function()
+      mocked_object.foo()
+    end)
+  end)
+
+  it('should give mocked objects a default name when none is provided', function()
+    mocked_object = mach.mock_object({ foo = function() end })
+
+    should_fail_with('unexpected function call <anonymous>:foo()', function()
+      mocked_object.foo()
+    end)
+  end)
+
   it('should allow mocking of any callable in an object, not just functions', function()
     local some_table = {
       foo = {}
