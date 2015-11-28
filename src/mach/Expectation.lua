@@ -43,8 +43,6 @@ function expectation:when(thunk)
   end
 
   local function called(m, name, args)
-    assert(#self._calls > 0, 'unexpected call')
-
     local valid_function_found = false
 
     for i, call in ipairs(self._calls) do
@@ -69,10 +67,12 @@ function expectation:when(thunk)
       if call:has_fixed_order() then break end
     end
 
-    if not valid_function_found then
-      unexpected_call_error(name, args, 2)
-    else
-      unexpected_args_error(name, args, 2)
+    if not self._ignore_other_calls then
+      if not valid_function_found then
+        unexpected_call_error(name, args, 2)
+      else
+        unexpected_args_error(name, args, 2)
+      end
     end
   end
 
@@ -152,6 +152,11 @@ function expectation:multiple_times(times)
     table.insert(self._calls, self._calls[#self._calls])
   end
 
+  return self
+end
+
+function expectation:and_other_calls_should_be_ignored()
+  self._ignore_other_calls = true
   return self
 end
 
