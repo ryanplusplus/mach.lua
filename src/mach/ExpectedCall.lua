@@ -1,12 +1,13 @@
 local expected_call = {}
 expected_call.__index = expected_call
 
-local function create(f, required, args)
+local function create(f, config)
   local o = {
     _f = f,
     _ordered = false,
-    _required = required,
-    _args = args,
+    _required = config.required,
+    _args = config.args,
+    _ignore_args = config.ignore_args,
     _return = {}
   }
 
@@ -20,6 +21,7 @@ function expected_call:function_matches(f)
 end
 
 function expected_call:args_match(args)
+  if self._ignore_args then return true end
   if #self._args ~= #args then return false end
 
   for k in ipairs(self._args) do

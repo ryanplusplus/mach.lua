@@ -55,6 +55,10 @@ describe('The mach library', function()
     end)
   end)
 
+  it('should allow you to expect a function to be called with any arguments', function()
+    f:should_be_called_with_any_arguments():when(function() f(1, '3') end)
+  end)
+
   it('should allow you to specify the return value of a mocked function', function()
     f:should_be_called():and_will_return(4):when(function()
       assert.is.equal(f(), 4)
@@ -315,6 +319,12 @@ describe('The mach library', function()
   it('should fail if should_be_called_with is used after a call has already been specified', function()
     should_fail_with('call already specified', function()
       f:should_be_called():should_be_called_with(4)
+    end)
+  end)
+
+  it('should fail if should_be_called_with_any_arguments is used after a call has already been specified', function()
+    should_fail_with('call already specified', function()
+      f:should_be_called():should_be_called_with_any_arguments()
     end)
   end)
 

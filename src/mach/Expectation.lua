@@ -111,18 +111,28 @@ function expectation:and_also(other)
   return self
 end
 
-function expectation:should_be_called_with(...)
-  if self._call_specified == true then
+function expectation:should_be_called_with_any_arguments()
+  if self._call_specified then
     error('call already specified', 2)
   end
 
   self._call_specified = true
-  table.insert(self._calls, ExpectedCall(self._m, true, table.pack(...)))
+  table.insert(self._calls, ExpectedCall(self._m, { required = true, ignore_args = true }))
+  return self
+end
+
+function expectation:should_be_called_with(...)
+  if self._call_specified then
+    error('call already specified', 2)
+  end
+
+  self._call_specified = true
+  table.insert(self._calls, ExpectedCall(self._m, { required = true, args = table.pack(...) }))
   return self
 end
 
 function expectation:should_be_called()
-  if self._call_specified == true then
+  if self._call_specified then
     error('call already specified', 2)
   end
 
@@ -135,7 +145,7 @@ function expectation:may_be_called_with(...)
   end
 
   self._call_specified = true
-  table.insert(self._calls, ExpectedCall(self._m, false, table.pack(...)))
+  table.insert(self._calls, ExpectedCall(self._m, { required = false, args = table.pack(...) }))
   return self
 end
 
