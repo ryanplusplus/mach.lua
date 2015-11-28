@@ -29,9 +29,9 @@ function expectation:and_will_return(...)
 end
 
 function expectation:and_will_raise_error(...)
-  -- if not self._call_specified then
-  --   error('cannot set return value for an unspecified call', 2)
-  -- end
+  if not self._call_specified then
+    error('cannot set error for an unspecified call', 2)
+  end
 
   self._calls[#self._calls]:set_error(...)
 
