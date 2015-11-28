@@ -412,6 +412,14 @@ describe('The mach library', function()
     f:may_be_called_with(4):when(function() end)
   end)
 
+  it('should allow soft expectations with any arguments to be called', function()
+    f:may_be_called_with_any_arguments():when(function() f(4) end)
+  end)
+
+  it('should allow soft expectations with any arguments to be omitted', function()
+    f:may_be_called_with_any_arguments():when(function() end)
+  end)
+
   it('should fail if may_be_called is used after a call has already been specified', function()
     should_fail_with('call already specified', function()
       f:should_be_called():may_be_called()
@@ -421,6 +429,12 @@ describe('The mach library', function()
   it('should fail if may_be_called_with is used after a call has already been specified', function()
     should_fail_with('call already specified', function()
       f:should_be_called():may_be_called_with(4)
+    end)
+  end)
+
+  it('should fail if may_be_called_with_any_arguments is used after a call has already been specified', function()
+    should_fail_with('call already specified', function()
+      f:should_be_called():may_be_called_with_any_arguments()
     end)
   end)
 

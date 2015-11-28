@@ -139,8 +139,18 @@ function expectation:should_be_called()
   return self:should_be_called_with()
 end
 
+function expectation:may_be_called_with_any_arguments()
+  if self._call_specified then
+    error('call already specified', 2)
+  end
+
+  self._call_specified = true
+  table.insert(self._calls, ExpectedCall(self._m, { required = false, ignore_args = true }))
+  return self
+end
+
 function expectation:may_be_called_with(...)
-  if self._call_specified == true then
+  if self._call_specified then
     error('call already specified', 2)
   end
 
@@ -150,7 +160,7 @@ function expectation:may_be_called_with(...)
 end
 
 function expectation:may_be_called()
-  if self._call_specified == true then
+  if self._call_specified then
     error('call already specified', 2)
   end
 
