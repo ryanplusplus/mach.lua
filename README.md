@@ -8,7 +8,7 @@ Simple mocking framework for Lua inspired by CppUMock and designed for readabili
 ```lua
 local mach = require 'mach'
 
-local f = mach.mock_function()
+local f = mach.mock_function('f')
 
 f:should_be_called():when(function() f() end)
 ```
@@ -19,7 +19,7 @@ f:should_be_called():when(function() f() end)
 local mach = require 'mach'
 
 local o = {}
-o.m = mach.mach_method()
+o.m = mach.mach_method('m')
 
 m:should_be_called():when(function() o:m() end)
 ```
@@ -34,7 +34,7 @@ local some_table = {
   bar = function() end
 }
 
-mocked_table = mach.mockTable(some_table)
+mocked_table = mach.mockTable(some_table, 'some_table')
 
 mocked_table.foo:should_be_called():when(function()
   mocked_table.foo()
@@ -50,7 +50,7 @@ local some_object = {}
 function some_object:foo() end
 function some_object:bar() end
 
-mocked_object = mach.mock_object(some_object)
+mocked_object = mach.mock_object(some_object, 'some_object')
 
 mocked_object.foo:should_be_called():when(function()
   mocked_object:foo()
@@ -62,8 +62,8 @@ end)
 ```lua
 local mach = require 'mach'
 
-local f1 = mach.mock_function()
-local f2 = mach.mock_function()
+local f1 = mach.mock_function('f1')
+local f2 = mach.mock_function('f2')
 
 f1:should_be_called():
   and_also(f2:should_be_called()):
@@ -78,7 +78,7 @@ f1:should_be_called():
 ```lua
 local mach = require 'mach'
 
-local f = mach.mock_function()
+local f = mach.mock_function('f')
 
 f:mayBeCalled():when(function() end)
 ```
@@ -88,7 +88,7 @@ f:mayBeCalled():when(function() end)
 ```lua
 local mach = require 'mach'
 
-local f = mach.mock_function()
+local f = mach.mock_function('f')
 
 -- Use and_then when order is important
 f:should_be_called_with(1):
@@ -112,7 +112,7 @@ f:should_be_called_with(1):
 ```lua
 local mach = require 'mach'
 
-local f = mach.mock_function()
+local f = mach.mock_function('f')
 
 f:should_be_called_with(1):
   and_also(f:should_be_called_with(2)):
@@ -131,8 +131,8 @@ f:should_be_called_with(1):
 ```lua
 local mach = require 'mach'
 
-local m1 = mach.mock_function()
-local m2 = mach.mock_function()
+local m1 = mach.mock_function('m1')
+local m2 = mach.mock_function('m2')
 
 function something_should_happen()
   return m1:should_be_called()
