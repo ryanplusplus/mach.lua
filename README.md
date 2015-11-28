@@ -57,7 +57,19 @@ mocked_object.foo:should_be_called():when(function()
 end)
 ```
 
-## Raising Errors with Mocks
+## Returning Values
+
+```lua
+local mach = require 'mach'
+
+local f = mach.mock_function('f')
+
+f:should_be_called():and_will_return(1, 4):when(function()
+  local x, y = f()
+end)
+```
+
+## Raising Errors
 
 ```lua
 local mach = require 'mach'
