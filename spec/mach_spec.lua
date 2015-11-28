@@ -345,7 +345,7 @@ describe('The mach library', function()
   end)
 
   it('should not allow calls to happen out of order when and_then is used', function()
-    should_fail_with('unexpected function call f2()', function()
+    should_fail_with('out of order function call f2()', function()
       f1:should_be_called():
         and_then(f2:should_be_called()):
         when(function()
@@ -365,7 +365,7 @@ describe('The mach library', function()
   end)
 
   it('should catch out of order calls when mixed with unordered calls', function()
-    should_fail_with('unexpected function call f3()', function()
+    should_fail_with('out of order function call f3()', function()
       f1:should_be_called():
         and_also(f2:should_be_called()):
         and_then(f3:should_be_called()):
@@ -388,6 +388,21 @@ describe('The mach library', function()
         f(4)
         f(3)
       end)
+  end)
+
+  it('should allow a strictly ordered call to occur after a missing optional call', function()
+    f1:may_be_called():and_then(f2:should_be_called()):when(function()
+      f2()
+    end)
+  end)
+
+  it('should not allow order to be violated for an optional call', function()
+    should_fail_with('unexpected function call f1()', function()
+      f1:may_be_called():and_then(f2:should_be_called()):when(function()
+        f2()
+        f1()
+      end)
+    end)
   end)
 
   it('should allow soft expectations to be called', function()

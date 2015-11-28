@@ -1,6 +1,7 @@
 local ExpectedCall = require 'mach.ExpectedCall'
 local unexpected_call_error = require 'mach.unexpected_call_error'
 local unexpected_args_error = require 'mach.unexpected_args_error'
+local out_of_order_call_error = require 'mach.out_of_order_call_error'
 
 local expectation = {}
 expectation.__index = expectation
@@ -42,16 +43,25 @@ function expectation:when(thunk)
     error('incomplete expectation', 2)
   end
 
+  local current = 1
+
   local function called(m, name, args)
     local valid_function_found = false
+    local incomplete_expectation_found = false
 
-    for i, call in ipairs(self._calls) do
+    for i = current, #self._calls do
+      local call = self._calls[i]
+
       if call:function_matches(m) then
         valid_function_found = true
 
         if call:args_match(args) then
-          if call:has_fixed_order() and i > 1 then
-            self._calls[i - 1]:fix_order()
+          if call:has_fixed_order() and incomplete_expectation_found then
+            out_of_order_call_error(name, args, 2)
+          end
+
+          if call:has_fixed_order() then
+            current = i
           end
 
           table.remove(self._calls, i)
@@ -64,7 +74,9 @@ function expectation:when(thunk)
         end
       end
 
-      if call:has_fixed_order() then break end
+      if call:is_required() then
+        incomplete_expectation_found = true;
+      end
     end
 
     if not self._ignore_other_calls then
@@ -94,9 +106,8 @@ function expectation:after(thunk)
 end
 
 function expectation:and_then(other)
-  self._calls[#self._calls]:fix_order()
-
   for _, call in ipairs(other._calls) do
+    call:fix_order()
     table.insert(self._calls, call)
   end
 
