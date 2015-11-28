@@ -146,7 +146,7 @@ describe('The mach library', function()
       bar = function() end
     }
 
-    mocked_table = mach.mock_table(some_table, 'some_table')
+    mocked_table = mach.mock_table(some_table)
 
     mocked_table.foo:should_be_called_with(1):and_will_return(2):
       and_also(mocked_table.bar:should_be_called()):
@@ -156,14 +156,30 @@ describe('The mach library', function()
       end)
   end)
 
+  it('should allow a mocked table to be named', function()
+    mocked_table = mach.mock_table({ foo = function() end }, 'some_table')
+
+    should_fail_with('unexpected function call some_table.foo()', function()
+      mocked_table.foo()
+    end)
+  end)
+
+  it('should give mocked tables a default name when none is provided', function()
+    mocked_table = mach.mock_table({ foo = function() end })
+
+    should_fail_with('unexpected function call <anonymous>.foo()', function()
+      mocked_table.foo()
+    end)
+  end)
+
   it('should fail when a function is incorrectly used as a method', function()
+    local some_table = {
+      foo = function() end
+    }
+
+    mocked_table = mach.mock_table(some_table)
+
     should_fail(function()
-      local some_table = {
-        foo = function() end
-      }
-
-      mocked_table = mach.mock_table(some_table)
-
       mocked_table.foo:should_be_called_with(1):and_will_return(2):when(function()
         mocked_table:foo(1)
       end)
