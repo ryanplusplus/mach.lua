@@ -21,7 +21,7 @@ build = {
     ['mach.unexpected_call_error'] = 'mach/unexpected_call_error.lua',
     ['mach.unexpected_args_error'] = 'mach/unexpected_args_error.lua',
     ['mach.out_of_order_call_error'] = 'mach/out_of_order_call_error.lua',
-    ['mach.call_status_message'] = 'mach/call_status_message.lua',
+    ['mach.format_call_status'] = 'mach/format_call_status.lua',
     ['mach.format_arguments'] = 'mach/format_arguments.lua',
   }
 }
