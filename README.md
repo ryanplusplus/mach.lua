@@ -150,7 +150,7 @@ f:should_be_called_with(1):
   end)
 ```
 
-## Match Arguments Using Deep Compare
+## Matching Arguments Using Deep Compare
 
 ```lua
 local mach = require 'mach'
@@ -163,7 +163,7 @@ f:should_be_called_with(mach.match({ 1, 2, 3 })):
   end)
 ```
 
-## Match Arguments Using Custom Matcher
+## Matching Arguments Using a Custom Matcher
 
 ```lua
 local mach = require 'mach'
