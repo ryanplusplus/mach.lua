@@ -45,13 +45,13 @@ describe('The mach library', function()
   end)
 
   it('should alert you when the wrong function is called', function()
-    should_fail_with('unexpected function call f2()', function()
+    should_fail_with('Unexpected function call f2()', function()
       f1:should_be_called():when(function() f2() end)
     end)
   end)
 
   it('should alert you when a function is called unexpectedly', function()
-    should_fail_with('unexpected function call f()', function()
+    should_fail_with('Unexpected function call f()', function()
       f()
     end)
   end)
@@ -174,7 +174,7 @@ describe('The mach library', function()
   it('should allow a mocked table to be named', function()
     mocked_table = mach.mock_table({ foo = function() end }, 'some_table')
 
-    should_fail_with('unexpected function call some_table.foo()', function()
+    should_fail_with('Unexpected function call some_table.foo()', function()
       mocked_table.foo()
     end)
   end)
@@ -182,7 +182,7 @@ describe('The mach library', function()
   it('should give mocked tables a default name when none is provided', function()
     mocked_table = mach.mock_table({ foo = function() end })
 
-    should_fail_with('unexpected function call <anonymous>.foo()', function()
+    should_fail_with('Unexpected function call <anonymous>.foo()', function()
       mocked_table.foo()
     end)
   end)
@@ -220,7 +220,7 @@ describe('The mach library', function()
   it('should allow a mocked object to be named', function()
     mocked_object = mach.mock_object({ foo = function() end }, 'some_object')
 
-    should_fail_with('unexpected function call some_object:foo()', function()
+    should_fail_with('Unexpected function call some_object:foo()', function()
       mocked_object.foo()
     end)
   end)
@@ -228,7 +228,7 @@ describe('The mach library', function()
   it('should give mocked objects a default name when none is provided', function()
     mocked_object = mach.mock_object({ foo = function() end })
 
-    should_fail_with('unexpected function call <anonymous>:foo()', function()
+    should_fail_with('Unexpected function call <anonymous>:foo()', function()
       mocked_object.foo()
     end)
   end)
@@ -363,7 +363,7 @@ describe('The mach library', function()
   end)
 
   it('should not allow calls to happen out of order when and_then is used', function()
-    should_fail_with('out of order function call f2()', function()
+    should_fail_with('Out of order function call f2()', function()
       f1:should_be_called():
         and_then(f2:should_be_called()):
         when(function()
@@ -372,7 +372,7 @@ describe('The mach library', function()
         end)
     end)
 
-    should_fail_with('unexpected arguments (2) provided to function f1', function()
+    should_fail_with('Unexpected arguments (2) provided to function f1', function()
       f1:should_be_called_with(1):
         and_then(f2:should_be_called(2)):
         when(function()
@@ -383,7 +383,7 @@ describe('The mach library', function()
   end)
 
   it('should catch out of order calls when mixed with unordered calls', function()
-    should_fail_with('out of order function call f3()', function()
+    should_fail_with('Out of order function call f3()', function()
       f1:should_be_called():
         and_also(f2:should_be_called()):
         and_then(f3:should_be_called()):
@@ -415,7 +415,7 @@ describe('The mach library', function()
   end)
 
   it('should not allow order to be violated for an optional call', function()
-    should_fail_with('unexpected function call f1()', function()
+    should_fail_with('Unexpected function call f1()', function()
       f1:may_be_called():and_then(f2:should_be_called()):when(function()
         f2()
         f1()
@@ -472,7 +472,7 @@ describe('The mach library', function()
   end)
 
   it('should handle unexpected calls outside of an expectation', function()
-    should_fail_with('unexpected function call f(1, 2, 3)', function()
+    should_fail_with('Unexpected function call f(1, 2, 3)', function()
       mach.mock_function('f')(1, 2, 3)
     end)
   end)
@@ -480,19 +480,19 @@ describe('The mach library', function()
   it('should handle table arguments in error messages', function()
     local a = {}
 
-    should_fail_with('unexpected function call f(' .. tostring(a) ..')', function()
+    should_fail_with('Unexpected function call f(' .. tostring(a) ..')', function()
       mach.mock_function('f')(a)
     end)
   end)
 
   it('should give mocked functions a default name when none is provided', function()
-    should_fail_with('unexpected function call <anonymous>(1, 2, 3)', function()
+    should_fail_with('Unexpected function call <anonymous>(1, 2, 3)', function()
       mach.mock_function()(1, 2, 3)
     end)
   end)
 
   it('should give mocked methods a default name when none is provided', function()
-    should_fail_with('unexpected function call <anonymous>(2, 3)', function()
+    should_fail_with('Unexpected function call <anonymous>(2, 3)', function()
       mach.mock_method()(1, 2, 3)
     end)
   end)
@@ -506,10 +506,10 @@ describe('The mach library', function()
 
   it('should report completed and incomplete calls in unexpected call errors', function()
     local expected_failure =
-      'unexpected function call f3()\n' ..
-      'completed calls:\n' ..
+      'Unexpected function call f3()\n' ..
+      'Completed calls:\n' ..
       '\tf1()\n' ..
-      'incomplete calls:\n' ..
+      'Incomplete calls:\n' ..
       '\tf2()'
 
     should_fail_with_exactly(expected_failure, function()
@@ -522,10 +522,10 @@ describe('The mach library', function()
 
   it('should report completed and incomplete calls in unexpected argument errors', function()
     local expected_failure =
-      'unexpected arguments (3) provided to function f2\n' ..
-      'completed calls:\n' ..
+      'Unexpected arguments (3) provided to function f2\n' ..
+      'Completed calls:\n' ..
       '\tf1()\n' ..
-      'incomplete calls:\n' ..
+      'Incomplete calls:\n' ..
       '\tf2()'
 
     should_fail_with_exactly(expected_failure, function()
@@ -538,10 +538,10 @@ describe('The mach library', function()
 
   it('should report completed and incomplete calls in out of order call errors', function()
     local expected_failure =
-      'out of order function call f3()\n' ..
-      'completed calls:\n' ..
+      'Out of order function call f3()\n' ..
+      'Completed calls:\n' ..
       '\tf1()\n' ..
-      'incomplete calls:\n' ..
+      'Incomplete calls:\n' ..
       '\tf2()\n' ..
       '\tf3()'
 
@@ -558,8 +558,8 @@ describe('The mach library', function()
 
   it('should omit the completed call list in an error when no calls were completed', function()
     local expected_failure =
-      'unexpected function call f3()\n' ..
-      'incomplete calls:\n' ..
+      'Unexpected function call f3()\n' ..
+      'Incomplete calls:\n' ..
       '\tf1()'
 
     should_fail_with_exactly(expected_failure, function()
@@ -571,8 +571,8 @@ describe('The mach library', function()
 
   it('should omit the incomplete call list in an error when all calls were completed', function()
     local expected_failure =
-      'unexpected function call f3()\n' ..
-      'completed calls:\n' ..
+      'Unexpected function call f3()\n' ..
+      'Completed calls:\n' ..
       '\tf1()'
 
     should_fail_with_exactly(expected_failure, function()
@@ -589,8 +589,8 @@ describe('The mach library', function()
     }
 
     local expected_failure =
-      'unexpected function call f()\n' ..
-      'incomplete calls:\n' ..
+      'Unexpected function call f()\n' ..
+      'Incomplete calls:\n' ..
       '\tm()'
 
     should_fail_with_exactly(expected_failure, function()
@@ -602,10 +602,10 @@ describe('The mach library', function()
 
   it('should show optional function calls as optional in call status messages', function()
     local expected_failure =
-      'unexpected function call f3()\n' ..
-      'completed calls:\n' ..
+      'Unexpected function call f3()\n' ..
+      'Completed calls:\n' ..
       '\tf1()\n' ..
-      'incomplete calls:\n' ..
+      'Incomplete calls:\n' ..
       '\tf2() (optional)'
 
     should_fail_with_exactly(expected_failure, function()
@@ -618,8 +618,8 @@ describe('The mach library', function()
 
   it('should show actual arguments in call status messages', function()
     local expected_failure =
-      'unexpected function call f3()\n' ..
-      'completed calls:\n' ..
+      'Unexpected function call f3()\n' ..
+      'Completed calls:\n' ..
       '\tf1(1, 2, 3)'
 
     should_fail_with_exactly(expected_failure, function()

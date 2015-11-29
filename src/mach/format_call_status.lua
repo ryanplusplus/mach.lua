@@ -13,13 +13,13 @@ return function(completed_calls, incomplete_calls)
 
   if #completed_calls > 0 then
     message = message ..
-      '\ncompleted calls:' ..
+      '\nCompleted calls:' ..
       '\n\t' .. table.concat(completed_call_strings, '\n\t')
   end
 
   if #incomplete_calls > 0 then
     message = message ..
-      '\nincomplete calls:' ..
+      '\nIncomplete calls:' ..
       '\n\t' .. table.concat(incomplete_call_strings, '\n\t')
   end
 

@@ -189,3 +189,28 @@ something_should_happen():
   and_also(another_thing_should_happen()):
   when(the_code_under_test_runs)
 ```
+
+## Handy Error messages
+
+```lua
+local mach = require 'mach'
+
+local f1 = mach.mock_function('f1')
+local f2 = mach.mock_function('f2')
+local f2 = mach.mock_function('f3')
+
+f1:should_be_called_with(1):
+  and_also(f2:should_be_called_with(2)):
+  when(function()
+    f1(1)
+    f3(3)
+  end)
+```
+
+```
+Unexpected function call f(3)
+Completed calls:
+  f1(1)
+Incomplete calls:
+  f2(2)
+```

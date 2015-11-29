@@ -3,7 +3,7 @@ local format_arguments = require 'mach.format_arguments'
 
 return function(name, args, completed_calls, incomplete_calls, level)
   local message =
-    'unexpected function call ' .. name .. format_arguments(args) ..
+    'Unexpected function call ' .. name .. format_arguments(args) ..
     format_call_status(completed_calls, incomplete_calls)
 
   error(message, level + 1)
