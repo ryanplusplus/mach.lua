@@ -1,6 +1,8 @@
 local ExpectedCall = require 'mach.ExpectedCall'
 local Expectation = require 'mach.Expectation'
 local unexpected_call_error = require 'mach.unexpected_call_error'
+local default_matcher = require 'mach.deep_compare_matcher'
+local mach_match = require 'mach.match'
 
 local mach = {}
 
@@ -88,6 +90,10 @@ function mach.mock_object(o, name)
   end
 
   return mocked
+end
+
+function mach.match(value)
+  return setmetatable({ value = value, matcher = default_matcher }, mach_match)
 end
 
 return setmetatable(mach, { __call = function(_, ...) return Expectation(...) end })

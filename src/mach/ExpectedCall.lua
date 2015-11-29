@@ -1,3 +1,5 @@
+local mach_match = require 'mach.match'
+
 local expected_call = {}
 expected_call.__index = expected_call
 
@@ -40,7 +42,11 @@ function expected_call:args_match(args)
   if #self._args ~= #args then return false end
 
   for k in ipairs(self._args) do
-    if self._args[k] ~= args[k] then return false end
+    if getmetatable(self._args[k]) == mach_match then
+      if not self._args[k].matcher(self._args[k].value, args[k]) then return false end
+    elseif self._args[k] ~= args[k] then
+      return false
+    end
   end
 
   return true
