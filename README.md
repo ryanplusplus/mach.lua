@@ -150,6 +150,36 @@ f:should_be_called_with(1):
   end)
 ```
 
+## Match Arguments Using Deep Compare
+
+```lua
+local mach = require 'mach'
+
+local f = mach.mockFunction();
+
+f:should_be_called_with(mach.match({ 1, 2, 3 })):
+  when(function()
+    f({ 1, 2, 3 })
+  end)
+```
+
+## Match Arguments Using Custom Matcher
+
+```lua
+local mach = require 'mach'
+
+local custom_matcher = function(a, b)
+  return a == b
+end
+
+local f = mach.mockFunction();
+
+f:should_be_called_with(mach.match({ 1, 2, 3 }, custom_matcher)):
+  when(function()
+    f({ 1, 2, 3 })
+  end)
+```
+
 ## Ignoring Other calls
 
 ```javascript
