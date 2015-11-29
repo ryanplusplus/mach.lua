@@ -643,4 +643,19 @@ describe('The mach library', function()
       end)
     end)
   end)
+
+  it('should allow custom matchers to be used', function()
+    local function always_matches() return true end
+    local function never_matches() return false end
+
+    f:should_be_called_with(mach.match({ a = 1, b = 2 }, always_matches)):when(function()
+      f({ a = 11, b = 22 })
+    end)
+
+    should_fail(function()
+      f:should_be_called_with(mach.match({ a = 1, b = 2 }, never_matches)):when(function()
+        f({ a = 1, b = 2 })
+      end)
+    end)
+  end)
 end)

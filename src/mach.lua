@@ -92,8 +92,8 @@ function mach.mock_object(o, name)
   return mocked
 end
 
-function mach.match(value)
-  return setmetatable({ value = value, matcher = default_matcher }, mach_match)
+function mach.match(value, matcher)
+  return setmetatable({ value = value, matcher = matcher or default_matcher }, mach_match)
 end
 
 return setmetatable(mach, { __call = function(_, ...) return Expectation(...) end })
