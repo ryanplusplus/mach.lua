@@ -169,14 +169,14 @@ f:should_be_called_with(mach.match({ 1, 2, 3 })):
 local mach = require 'mach'
 
 local custom_matcher = function(a, b)
-  return a == b
+  return a[1] == b[1]
 end
 
 local f = mach.mockFunction();
 
 f:should_be_called_with(mach.match({ 1, 2, 3 }, custom_matcher)):
   when(function()
-    f({ 1, 2, 3 })
+    f({ 1, 4, 9 })
   end)
 ```
 
