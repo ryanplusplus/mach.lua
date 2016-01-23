@@ -110,8 +110,8 @@ function expectation:after(thunk)
 end
 
 function expectation:and_then(other)
-  for _, call in ipairs(other._calls) do
-    call:fix_order()
+  for i, call in ipairs(other._calls) do
+    if i == 1 then call:fix_order() end
     table.insert(self._calls, call)
   end
 

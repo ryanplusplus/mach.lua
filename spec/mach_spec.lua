@@ -408,6 +408,19 @@ describe('The mach library', function()
       end)
   end)
 
+  it('should correctly handle ordering when expected calls are deeply nested', function()
+    f:should_be_called_with(1):
+      and_also(f:should_be_called_with(2):
+        and_then(f:should_be_called_with(3):
+          and_also(f:should_be_called_with(4)))):
+      when(function()
+        f(2)
+        f(1)
+        f(4)
+        f(3)
+      end)
+  end)
+
   it('should allow a strictly ordered call to occur after a missing optional call', function()
     f1:may_be_called():and_then(f2:should_be_called()):when(function()
       f2()
