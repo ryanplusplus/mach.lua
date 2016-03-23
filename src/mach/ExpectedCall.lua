@@ -1,15 +1,12 @@
 local mach_match = require 'mach.match'
+local mach_any = require 'mach.any'
+local format_arguments = require 'mach.format_arguments'
 
 local expected_call = {}
 expected_call.__index = expected_call
 
 expected_call.__tostring = function(self)
-  local arg_strings = {}
-  for _, arg in ipairs(self._args) do
-    table.insert(arg_strings, tostring(arg))
-  end
-
-  local s = self._f._name .. '(' .. table.concat(arg_strings, ', ') .. ')'
+  local s = self._f._name .. format_arguments(self._args)
 
   if not self._required then
     s = s .. ' (optional)'
@@ -41,10 +38,10 @@ function expected_call:args_match(args)
   if self._ignore_args then return true end
   if #self._args ~= #args then return false end
 
-  for k in ipairs(self._args) do
-    if getmetatable(self._args[k]) == mach_match then
-      if not self._args[k].matcher(self._args[k].value, args[k]) then return false end
-    elseif self._args[k] ~= args[k] then
+  for i = 1, self._args.n do
+    if getmetatable(self._args[i]) == mach_match then
+      if not self._args[i].matcher(self._args[i].value, args[i]) then return false end
+    elseif self._args[i] ~= mach_any and self._args[i] ~= args[i] then
       return false
     end
   end

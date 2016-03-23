@@ -1,7 +1,7 @@
 return function(args)
   local arg_strings = {}
-  for _, arg in ipairs(args) do
-    table.insert(arg_strings, tostring(arg))
+  for i = 1, args.n do
+    table.insert(arg_strings, tostring(args[i]))
   end
 
   return '(' .. table.concat(arg_strings, ', ') .. ')'

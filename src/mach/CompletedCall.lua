@@ -1,13 +1,10 @@
+local format_arguments = require 'mach.format_arguments'
+
 local completed_call = {}
 completed_call.__index = completed_call
 
 completed_call.__tostring = function(self)
-  local arg_strings = {}
-  for _, arg in ipairs(self._args) do
-    table.insert(arg_strings, tostring(arg))
-  end
-
-  return self._name .. '(' .. table.concat(arg_strings, ', ') .. ')'
+  return self._name .. format_arguments(self._args)
 end
 
 local function create(name, args)

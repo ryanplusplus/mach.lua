@@ -57,6 +57,16 @@ mocked_object.foo:should_be_called():when(function()
 end)
 ```
 
+## Ignoring Arguments
+
+```lua
+local mach = require 'mach'
+
+local f = mach.mock_function('f')
+
+f:should_be_called_with_any_arguments():when(function() f('any', 'args', 'are', 'fine') end)
+```
+
 ## Returning Values
 
 ```lua
@@ -104,7 +114,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:mayBeCalled():when(function() end)
+f:may_be_called():when(function() end)
 ```
 
 ## Optional Ordering
@@ -180,7 +190,20 @@ f:should_be_called_with(mach.match({ 1, 2, 3 }, custom_matcher)):
   end)
 ```
 
-## Ignoring Other calls
+## Matching Any Single Argument
+
+```lua
+local mach = require 'mach'
+
+local f = mach.mockFunction();
+
+f:should_be_called_with(mach.any, 42):
+  when(function()
+    f({ 'whatever' }, 42)
+  end)
+```
+
+## Ignoring Other Calls
 
 ```javascript
 local mach = require 'mach'

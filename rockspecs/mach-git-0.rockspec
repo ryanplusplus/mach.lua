@@ -25,5 +25,6 @@ build = {
     ['mach.format_arguments'] = 'mach/format_arguments.lua',
     ['mach.deep_compare_matcher'] = 'mach/deep_compare_matcher.lua',
     ['mach.match'] = 'mach/match.lua',
+    ['mach.any'] = 'mach/any.lua',
   }
 }

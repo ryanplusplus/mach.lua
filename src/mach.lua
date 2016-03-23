@@ -6,6 +6,8 @@ local mach_match = require 'mach.match'
 
 local mach = {}
 
+mach.any = require 'mach.any'
+
 function unexpected_call(m, name, args)
   unexpected_call_error(name, args, {}, {}, 2)
 end
