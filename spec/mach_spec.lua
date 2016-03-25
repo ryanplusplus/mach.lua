@@ -657,6 +657,19 @@ describe('The mach library', function()
     end)
   end)
 
+  it('should print mach.match arguments in a friendly way', function()
+    local expected_failure =
+      'Unexpected arguments (4) provided to function f\n' ..
+      'Incomplete calls:\n' ..
+      '\tf(<mach.match(3)>)'
+
+      should_fail_with_exactly(expected_failure, function()
+        f:should_be_called_with(mach.match(3)):when(function()
+          f(4)
+        end)
+      end)
+  end)
+
   it('should allow custom matchers to be used', function()
     local function always_matches() return true end
     local function never_matches() return false end
