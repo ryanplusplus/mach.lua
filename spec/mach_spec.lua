@@ -608,8 +608,8 @@ describe('The mach library', function()
 
     should_fail_with_exactly(expected_failure, function()
       o.m:should_be_called():when(function()
-          f()
-        end)
+        f()
+      end)
     end)
   end)
 
@@ -679,7 +679,12 @@ describe('The mach library', function()
   end)
 
   it('should match other arguments when mach.any is used for an argument', function()
-    should_fail(function()
+    local expected_failure =
+      'Unexpected arguments (false, 2, 4) provided to function f\n' ..
+      'Incomplete calls:\n' ..
+      '\tf(<mach.any>, 2, 3)'
+
+    should_fail_with_exactly(expected_failure, function()
       f:should_be_called_with(mach.any, 2, 3):when(function()
         f(false, 2, 4)
       end)
