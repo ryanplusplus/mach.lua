@@ -19,7 +19,7 @@ f:should_be_called():when(function() f() end)
 local mach = require 'mach'
 
 local o = {}
-o.m = mach.mach_method('m')
+o.m = mach.mock_method('m')
 
 m:should_be_called():when(function() o:m() end)
 ```
