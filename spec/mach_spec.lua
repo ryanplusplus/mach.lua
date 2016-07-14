@@ -39,7 +39,7 @@ describe('The mach library', function()
   end)
 
   it('should alert you when a function is not called', function()
-    should_fail_with('not all calls occurred', function()
+    should_fail_with('Not all calls occurred', function()
       f:should_be_called():when(function() end)
     end)
   end)
@@ -565,6 +565,25 @@ describe('The mach library', function()
         when(function()
           f1()
           f3()
+        end)
+    end)
+  end)
+
+  it('should report completed and incomplete calls in not all calls occurred errors', function()
+    local expected_failure =
+      'Not all calls occurred\n' ..
+      'Completed calls:\n' ..
+      '\tf1()\n' ..
+      'Incomplete calls:\n' ..
+      '\tf2()\n' ..
+      '\tf3()'
+
+    should_fail_with_exactly(expected_failure, function()
+      f1:should_be_called():
+        and_then(f2:should_be_called()):
+        and_then(f3:should_be_called()):
+        when(function()
+          f1()
         end)
     end)
   end)

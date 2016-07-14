@@ -3,6 +3,7 @@ local CompletedCall = require 'mach.CompletedCall'
 local unexpected_call_error = require 'mach.unexpected_call_error'
 local unexpected_args_error = require 'mach.unexpected_args_error'
 local out_of_order_call_error = require 'mach.out_of_order_call_error'
+local not_all_calls_occurred_error = require 'mach.not_all_calls_occurred_error'
 
 local expectation = {}
 expectation.__index = expectation
@@ -96,7 +97,7 @@ function expectation:when(thunk)
 
   for _, call in pairs(self._calls) do
     if call:is_required() then
-      error('not all calls occurred', 2)
+      not_all_calls_occurred_error(self._completed_calls, self._calls, 2)
     end
   end
 end
