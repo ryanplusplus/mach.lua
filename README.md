@@ -34,7 +34,7 @@ local some_table = {
   bar = function() end
 }
 
-mocked_table = mach.mockTable(some_table, 'some_table')
+mocked_table = mach.mock_table(some_table, 'some_table')
 
 mocked_table.foo:should_be_called():when(function()
   mocked_table.foo()
