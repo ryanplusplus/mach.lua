@@ -261,7 +261,7 @@ f1:should_be_called_with(1):
 ```
 
 ```
-Unexpected function call f(3)
+Unexpected function call f3(3)
 Completed calls:
   f1(1)
 Incomplete calls:
