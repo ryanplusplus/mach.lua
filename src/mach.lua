@@ -8,25 +8,31 @@ local mach = {}
 
 mach.any = require 'mach.any'
 
-function unexpected_call(m, name, args)
+table.pack = table.pack or function(...)
+  return { n = select('#',...); ... }
+end
+
+table.unpack = table.unpack or unpack
+
+local function unexpected_call(m, name, args)
   unexpected_call_error(name, args, {}, {}, 2)
 end
 
 local subscriber = unexpected_call
 
-function handle_mock_calls(callback, thunk)
+local function handle_mock_calls(callback, thunk)
   subscriber = callback
   thunk()
   subscriber = unexpected_call
 end
 
-function mock_called(m, name, args)
+local function mock_called(m, name, args)
   return subscriber(m, name, args)
 end
 
-function create_expectation(_, method)
+local function create_expectation(_, method)
   return function(self, ...)
-    local expectation = Expectation(self)
+    local expectation = Expectation(handle_mock_calls, self)
     return expectation[method](expectation, ...)
   end
 end
@@ -62,7 +68,7 @@ function mach.mock_method(name)
   return m
 end
 
-function is_callable(x)
+local function is_callable(x)
   local is_function = type(x) == 'function'
   local has_call_metamethod = type((debug.getmetatable(x) or {}).__call) == 'function'
   return is_function or has_call_metamethod
@@ -98,4 +104,4 @@ function mach.match(value, matcher)
   return setmetatable({ value = value, matcher = matcher or default_matcher }, mach_match)
 end
 
-return setmetatable(mach, { __call = function(_, ...) return Expectation(...) end })
+return mach

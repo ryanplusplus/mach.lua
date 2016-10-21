@@ -5,7 +5,7 @@ local f = io.open('build/mach.lua', 'w')
 f:write([==[
 --[[lit-meta
   name = 'ryanplusplus/mach'
-  version = '1.0.4'
+  version = '1.0.5'
   description = 'Simple mocking framework for Lua inspired by CppUMock and designed for readability.'
   tags = { 'testing' }
   license = 'MIT'

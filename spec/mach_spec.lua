@@ -682,11 +682,11 @@ describe('The mach library', function()
       'Incomplete calls:\n' ..
       '\tf(<mach.match(3)>)'
 
-      should_fail_with_exactly(expected_failure, function()
-        f:should_be_called_with(mach.match(3)):when(function()
-          f(4)
-        end)
+    should_fail_with_exactly(expected_failure, function()
+      f:should_be_called_with(mach.match(3)):when(function()
+        f(4)
       end)
+    end)
   end)
 
   it('should allow custom matchers to be used', function()
