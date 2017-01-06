@@ -515,6 +515,11 @@ describe('The mach library', function()
       f1()
       f2()
     end)
+
+    f1:should_be_called():with_other_calls_ignored():when(function()
+      f1()
+      f2()
+    end)
   end)
 
   it('should report completed and incomplete calls in unexpected call errors', function()

@@ -197,4 +197,6 @@ function expectation:and_other_calls_should_be_ignored()
   return self
 end
 
+expectation.with_other_calls_ignored = expectation.and_other_calls_should_be_ignored
+
 return create

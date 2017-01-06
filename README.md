@@ -210,7 +210,18 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:should_be_called().and_other_calls_should_be_ignored():when(function()
+f:should_be_called():and_other_calls_should_be_ignored():when(function()
+  f()
+  f(1)
+end)
+```
+
+```javascript
+local mach = require 'mach'
+
+local f = mach.mock_function('f')
+
+f:should_be_called():with_other_calls_ignored():when(function()
   f()
   f(1)
 end)
