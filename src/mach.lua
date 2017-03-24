@@ -104,4 +104,10 @@ function mach.match(value, matcher)
   return setmetatable({ value = value, matcher = matcher or default_matcher }, mach_match)
 end
 
+function mach.ignore_mocked_calls_when(thunk)
+  subscriber = load''
+  thunk()
+  subscriber = unexpected_call
+end
+
 return mach
