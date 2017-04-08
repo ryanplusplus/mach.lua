@@ -1,7 +1,8 @@
 package = 'mach'
 version = 'git-0'
 source = {
-  url = 'git://github.com/ryanplusplus/mach.lua.git'
+  url = 'git://github.com/ryanplusplus/mach.lua.git',
+  dir = 'src'
 }
 description = {
   summary = 'Simple mocking framework for Lua inspired by CppUMock and designed for readability.',
