@@ -485,8 +485,8 @@ describe('The mach library', function()
   end)
 
   it('should handle unexpected calls outside of an expectation', function()
-    should_fail_with('Unexpected function call f(1, 2, 3)', function()
-      mach.mock_function('f')(1, 2, 3)
+    should_fail_with("Unexpected function call f(1, 2, '3')", function()
+      mach.mock_function('f')(1, 2, '3')
     end)
   end)
 
@@ -685,10 +685,10 @@ describe('The mach library', function()
     local expected_failure =
       'Unexpected arguments (4) provided to function f\n' ..
       'Incomplete calls:\n' ..
-      '\tf(<mach.match(3)>)'
+      "\tf(<mach.match('3')>)"
 
     should_fail_with_exactly(expected_failure, function()
-      f:should_be_called_with(mach.match(3)):when(function()
+      f:should_be_called_with(mach.match('3')):when(function()
         f(4)
       end)
     end)

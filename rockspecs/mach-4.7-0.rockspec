@@ -1,8 +1,8 @@
 package = 'mach'
-version = 'git-0'
+version = '4.7-0'
 source = {
-  url = 'https://github.com/ryanplusplus/mach.lua/archive/master.zip',
-  dir = 'mach.lua-master/src'
+  url = 'https://github.com/ryanplusplus/mach.lua/archive/v4.7-0.tar.gz',
+  dir = 'mach.lua-4.7-0/src'
 }
 description = {
   summary = 'Simple mocking framework for Lua inspired by CppUMock and designed for readability.',
