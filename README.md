@@ -205,7 +205,7 @@ f:should_be_called_with(mach.any, 42):
 
 ## Ignoring Other Calls
 
-```javascript
+```lua
 local mach = require 'mach'
 
 local f = mach.mock_function('f')
@@ -216,7 +216,7 @@ f:should_be_called():and_other_calls_should_be_ignored():when(function()
 end)
 ```
 
-```javascript
+```lua
 local mach = require 'mach'
 
 local f = mach.mock_function('f')
