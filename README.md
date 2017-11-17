@@ -227,6 +227,19 @@ f:should_be_called():with_other_calls_ignored():when(function()
 end)
 ```
 
+## Ignoring All Calls
+
+```lua
+local mach = require 'mach'
+
+local f = mach.mock_function('f')
+
+mach.ignore_mocked_calls_when(function()
+  f()
+  f(1, 2, 3)
+end)
+```
+
 ## Flexible Syntax
 
 ```lua
