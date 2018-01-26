@@ -134,7 +134,7 @@ function expectation:should_be_called_with_any_arguments()
   end
 
   self._call_specified = true
-  table.insert(self._calls, ExpectedCall(self._m, { required = true, ignore_args = true }))
+  table.insert(self._calls, ExpectedCall(self._m, { required = true, args = table.pack(), ignore_args = true }))
   return self
 end
 

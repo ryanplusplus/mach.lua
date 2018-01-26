@@ -733,4 +733,21 @@ describe('The mach library', function()
       f()
     end)
   end)
+
+  it('should correctly print arguments for incomplete expectations that accept any arguments', function()
+    local expected_failure =
+      'Not all calls occurred\n' ..
+      'Completed calls:\n' ..
+      '\tf(1)\n' ..
+      'Incomplete calls:\n' ..
+      '\tf()'
+
+    should_fail_with_exactly(expected_failure, function()
+      f:should_be_called_with_any_arguments():
+        and_then(f:should_be_called_with_any_arguments()):
+        when(function()
+          f(1)
+        end)
+    end)
+  end)
 end)
