@@ -493,7 +493,7 @@ describe('The mach library', function()
   it('should handle table arguments in error messages', function()
     local a = {}
 
-    should_fail_with('Unexpected function call f(' .. tostring(a) ..')', function()
+    should_fail_with('Unexpected function call f({})', function()
       mach.mock_function('f')(a)
     end)
   end)
@@ -685,10 +685,10 @@ describe('The mach library', function()
     local expected_failure =
       'Unexpected arguments (4) provided to function f\n' ..
       'Incomplete calls:\n' ..
-      "\tf(<mach.match('3')>)"
+      "\tf(<mach.match({ ['3'] = 1 })>)"
 
     should_fail_with_exactly(expected_failure, function()
-      f:should_be_called_with(mach.match('3')):when(function()
+      f:should_be_called_with(mach.match({ ['3'] = 1 })):when(function()
         f(4)
       end)
     end)
