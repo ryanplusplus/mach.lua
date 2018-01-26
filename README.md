@@ -91,6 +91,19 @@ f:should_be_called():and_will_raise_error('some error'):when(function()
 end)
 ```
 
+## Multiple Calls to the Same Function
+
+```lua
+local mach = require 'mach'
+
+local f = mach.mock_function('f')
+
+f:should_be_called():multiple_times(2):when(function()
+  f()
+  f()
+end)
+```
+
 ## Multiple Expectations
 
 ```lua
