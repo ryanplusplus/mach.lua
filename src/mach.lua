@@ -105,7 +105,7 @@ function mach.match(value, matcher)
 end
 
 function mach.ignore_mocked_calls_when(thunk)
-  subscriber = load''
+  subscriber = function() end
   thunk()
   subscriber = unexpected_call
 end
