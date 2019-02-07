@@ -21,7 +21,7 @@ local mach = require 'mach'
 local o = {}
 o.m = mach.mock_method('m')
 
-m:should_be_called():when(function() o:m() end)
+o.m:should_be_called():when(function() o:m() end)
 ```
 
 ## Mocking a Table
