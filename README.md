@@ -10,7 +10,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:should_be_called():when(function() f() end)
+f.should_be_called().when(function() f() end)
 ```
 
 ## Mocking a Method
@@ -21,7 +21,7 @@ local mach = require 'mach'
 local o = {}
 o.m = mach.mock_method('m')
 
-o.m:should_be_called():when(function() o:m() end)
+o.m.should_be_called().when(function() o:m() end)
 ```
 
 ## Mocking a Table
@@ -36,7 +36,7 @@ local some_table = {
 
 mocked_table = mach.mock_table(some_table, 'some_table')
 
-mocked_table.foo:should_be_called():when(function()
+mocked_table.foo.should_be_called().when(function()
   mocked_table.foo()
 end)
 ```
@@ -52,7 +52,7 @@ function some_object:bar() end
 
 mocked_object = mach.mock_object(some_object, 'some_object')
 
-mocked_object.foo:should_be_called():when(function()
+mocked_object.foo.should_be_called().when(function()
   mocked_object:foo()
 end)
 ```
@@ -64,7 +64,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:should_be_called_with_any_arguments():when(function() f('any', 'args', 'are', 'fine') end)
+f.should_be_called_with_any_arguments().when(function() f('any', 'args', 'are', 'fine') end)
 ```
 
 ## Returning Values
@@ -74,7 +74,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:should_be_called():and_will_return(1, 4):when(function()
+f.should_be_called().and_will_return(1, 4).when(function()
   local x, y = f()
 end)
 ```
@@ -86,7 +86,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:should_be_called():and_will_raise_error('some error'):when(function()
+f.should_be_called().and_will_raise_error('some error').when(function()
   f()
 end)
 ```
@@ -98,7 +98,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:should_be_called():multiple_times(2):when(function()
+f.should_be_called().multiple_times(2).when(function()
   f()
   f()
 end)
@@ -112,9 +112,9 @@ local mach = require 'mach'
 local f1 = mach.mock_function('f1')
 local f2 = mach.mock_function('f2')
 
-f1:should_be_called():
-  and_also(f2:should_be_called()):
-  when(function()
+f1.should_be_called()
+  .and_also(f2.should_be_called())
+  .when(function()
     f1()
     f2()
   end)
@@ -127,7 +127,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:may_be_called():when(function() end)
+f.may_be_called().when(function() end)
 ```
 
 ## Optional Ordering
@@ -138,17 +138,17 @@ local mach = require 'mach'
 local f = mach.mock_function('f')
 
 -- Use and_then when order is important
-f:should_be_called_with(1):
-  and_then(f:should_be_called_with(2)):
-  when(function()
+f.should_be_called_with(1)
+  .and_then(f.should_be_called_with(2))
+  .when(function()
     f(2) -- Error, out of order call
     f(1)
   end)
 
 -- Use and_also when order is unimportant
-f:should_be_called_with(1):
-  and_also(f:should_be_called_with(2)):
-  when(function()
+f.should_be_called_with(1)
+  .and_also(f.should_be_called_with(2))
+  .when(function()
     f(2) -- No error, order is not fixed when 'and_also' is used
     f(1)
   end)
@@ -161,11 +161,11 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:should_be_called_with(1):
-  and_also(f:should_be_called_with(2)):
-  and_then(f:should_be_called_with(3)):
-  and_also(f:should_be_called_with(4)):
-  when(function()
+f.should_be_called_with(1)
+  .and_also(f.should_be_called_with(2))
+  .and_then(f.should_be_called_with(3))
+  .and_also(f.should_be_called_with(4))
+  .when(function()
     f(2)
     f(1)
     f(4)
@@ -180,8 +180,8 @@ local mach = require 'mach'
 
 local f = mach.mockFunction();
 
-f:should_be_called_with(mach.match({ 1, 2, 3 })):
-  when(function()
+f.should_be_called_with(mach.match({ 1, 2, 3 }))
+  .when(function()
     f({ 1, 2, 3 })
   end)
 ```
@@ -197,8 +197,8 @@ end
 
 local f = mach.mockFunction();
 
-f:should_be_called_with(mach.match({ 1, 2, 3 }, custom_matcher)):
-  when(function()
+f.should_be_called_with(mach.match({ 1, 2, 3 }, custom_matcher))
+  .when(function()
     f({ 1, 4, 9 })
   end)
 ```
@@ -210,8 +210,8 @@ local mach = require 'mach'
 
 local f = mach.mockFunction();
 
-f:should_be_called_with(mach.any, 42):
-  when(function()
+f.should_be_called_with(mach.any, 42)
+  .when(function()
     f({ 'whatever' }, 42)
   end)
 ```
@@ -223,7 +223,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:should_be_called():and_other_calls_should_be_ignored():when(function()
+f.should_be_called().and_other_calls_should_be_ignored().when(function()
   f()
   f(1)
 end)
@@ -234,7 +234,7 @@ local mach = require 'mach'
 
 local f = mach.mock_function('f')
 
-f:should_be_called():with_other_calls_ignored():when(function()
+f.should_be_called().with_other_calls_ignored().when(function()
   f()
   f(1)
 end)
@@ -262,11 +262,11 @@ local m1 = mach.mock_function('m1')
 local m2 = mach.mock_function('m2')
 
 function something_should_happen()
-  return m1:should_be_called()
+  return m1.should_be_called()
 end
 
 function another_thing_should_happen()
-  return m2:should_be_called_with(1, 2, 3)
+  return m2.should_be_called_with(1, 2, 3)
 end
 
 function the_code_under_test_runs()
@@ -275,9 +275,9 @@ function the_code_under_test_runs()
 end
 
 -- Actual test:
-something_should_happen():
-  and_also(another_thing_should_happen()):
-  when(the_code_under_test_runs)
+something_should_happen()
+  .and_also(another_thing_should_happen())
+  .when(the_code_under_test_runs)
 ```
 
 ## Handy Error messages
@@ -289,9 +289,9 @@ local f1 = mach.mock_function('f1')
 local f2 = mach.mock_function('f2')
 local f2 = mach.mock_function('f3')
 
-f1:should_be_called_with(1):
-  and_also(f2:should_be_called_with(2)):
-  when(function()
+f1.should_be_called_with(1)
+  .and_also(f2.should_be_called_with(2))
+  .when(function()
     f1(1)
     f3(3)
   end)

@@ -30,13 +30,23 @@ local function mock_called(m, name, args)
   return subscriber(m, name, args)
 end
 
-local function create_expectation(_, method)
-  return function(self, ...)
-    local expectation = Expectation(handle_mock_calls, self)
-    if not expectation[method] then
-      error("attempt to call a nil value (field '" .. method .. "')", 2)
+local function CreateExpectation(o)
+  return function(_, method)
+    local function aux(self, ...)
+      local expectation = Expectation(handle_mock_calls, self)
+      if not expectation[method] then
+        error("attempt to call a nil value (field '" .. method .. "')", 2)
+      end
+      return expectation[method](expectation, ...)
     end
-    return expectation[method](expectation, ...)
+
+    return function(self, ...)
+      if self == o then
+        return aux(self, ...)
+      else
+        return aux(o, self, ...)
+      end
+    end
   end
 end
 
@@ -49,7 +59,7 @@ function mach.mock_function(name)
       return mock_called(f, name, table.pack(...))
     end,
 
-    __index = create_expectation
+    __index = CreateExpectation(f)
   })
 
   return f
@@ -65,7 +75,7 @@ function mach.mock_method(name)
       return mock_called(m, name, args)
     end,
 
-    __index = create_expectation
+    __index = CreateExpectation(m)
   })
 
   return m
