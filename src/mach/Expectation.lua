@@ -32,6 +32,8 @@ return function(handle_mock_calls, m)
     return o
   end)
 
+  o.with_result = o.and_will_return
+
   o.and_will_raise_error = wrap(function(...)
     if not call_specified then
       error('cannot set error for an unspecified call', 2)

@@ -78,6 +78,10 @@ describe('The mach library', function()
     f.should_be_called().and_will_return(4).when(function()
       assert.is.equal(f(), 4)
     end)
+
+    f.should_be_called().with_result(4).when(function()
+      assert.is.equal(f(), 4)
+    end)
   end)
 
   it('should allow you to specify multiple return values for a mocked function', function()

@@ -77,6 +77,10 @@ local f = mach.mock_function('f')
 f.should_be_called().and_will_return(1, 4).when(function()
   local x, y = f()
 end)
+
+f.should_be_called().with_result(1, 4).when(function()
+  local x, y = f()
+end)
 ```
 
 ## Raising Errors
