@@ -733,6 +733,18 @@ describe('The mach library', function()
     end)
   end)
 
+  it('should conflict with the test above', function()
+    local function has_optional_inputs(a, args) f(a, args) end
+
+    f.should_be_called_with(mach.match({ a = 1, b = 2 }), 'some_input').when(function()
+      has_optional_inputs({ a = 1, b = 2 }, 'some_input')
+    end)
+
+    f.should_be_called_with(mach.match({ a = 1, b = 2 })).when(function()
+      has_optional_inputs({ a = 1, b = 2 })
+    end)
+  end)
+
   it('should match any argument with mach.any', function()
     f.should_be_called_with(mach.any, 2, 3).when(function()
       f({ a = 11, b = 22 }, 2, 3)
