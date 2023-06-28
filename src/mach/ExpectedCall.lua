@@ -36,7 +36,7 @@ end
 
 function expected_call:args_match(args)
   if self._ignore_args then return true end
-  if #self._args ~= #args then return false end
+  if self._args.n ~= args.n then return false end
 
   for i = 1, self._args.n do
     if getmetatable(self._args[i]) == mach_match then

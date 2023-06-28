@@ -717,6 +717,22 @@ describe('The mach library', function()
     end)
   end)
 
+  it('should allow custom matchers to have a nil input', function()
+    local function matches_by_type(a,b) return type(a) == type(b) end
+
+    f.should_be_called_with(mach.match({ a = 1, b = 2 }, matches_by_type)).when(function()
+      f({ a = 11, b = 22 })
+    end)
+
+    f.should_be_called_with(mach.match(nil, matches_by_type)).when(function()
+      f(nil)
+    end)
+
+    f.should_be_called_with(mach.match(function() end, matches_by_type)).when(function()
+      f(function() end)
+    end)
+  end)
+
   it('should match any argument with mach.any', function()
     f.should_be_called_with(mach.any, 2, 3).when(function()
       f({ a = 11, b = 22 }, 2, 3)
